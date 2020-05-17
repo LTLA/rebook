@@ -1,0 +1,16 @@
+Package: bookup
+Version: 0.99.0
+Title: Book-building Utilities for Bioconductor
+Authors@R:
+    person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))
+Description: 
+    Provides utilities to generate bookdown chapters from Rmarkdown files and
+    to compile said books on the Bioconductor build system.
+Imports:
+    knitr,
+    BiocStyle,
+    utils,
+    callr,
+    rmarkdown
+License: GPL-3
+RoxygenNote: 7.1.0
