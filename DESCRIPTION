@@ -1,10 +1,13 @@
 Package: rebook 
 Version: 0.99.0
+Date: 2020-05-07
 Title: Re-using Content in Bioconductor Books
 Authors@R:
     person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))
 Description: 
     Provides utilities to re-use content within and across Bioconductor books.
+    This is mostly based on functionality developed while writing the OSCA book,
+    but generalized for potential use in other large books with heavy compute.
 Imports:
     knitr,
     BiocStyle,
@@ -12,4 +15,5 @@ Imports:
     callr,
     rmarkdown
 License: GPL-3
+VignetteBuilder: knitr
 RoxygenNote: 7.1.0
