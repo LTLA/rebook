@@ -1,0 +1,25 @@
+# This tests the compilation machinery works as expected.
+# library(testthat); library(rebook); source("test-compile.R")
+
+example <- system.file("example", "test.Rmd", package="rebook")
+tmp <- tempfile()
+tmprmd <- paste0(tmp, ".Rmd")
+file.copy(example, tmprmd)
+
+test_that("compileChapter works as expected", {
+    compileChapter(tmprmd)
+    expect_true(file.exists(paste0(tmp, ".html")))
+    expect_true(file.exists(paste0(tmp, "_cache/html")))
+
+    # Does not contaminate the global namespace.
+    expect_false(exists('godzilla'))
+})
+
+fail <- tempfile(fileext=".Rmd")
+write(file=fail, "```{r}
+a + b
+```")
+
+test_that("compileChapter throws errors as expected", {
+    expect_error(compileChapter(fail), "failed to compile") 
+})
