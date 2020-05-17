@@ -11,6 +11,9 @@
 #' The output of this should be added to the \code{Suggests} field of the book's \code{DESCRIPTION}, 
 #' to make it easier to simply install all of its required dependencies.
 #'
+#' Note that dependencies in inline code sections are not detected,
+#' so these should be explicitly mentioned in a standalone code chunk to be captured.
+#'
 #' @author Aaron Lun
 #'
 #' @export
@@ -19,11 +22,9 @@ scrapeDependencies <- function(dir) {
     collated <- character(0)
     
     for (i in seq_along(all.rmds)) {
-        txt <- readLines(all.rmds[i])
-        collated <- c(collated, 
-            .extract_pkgname("library\\(([^\\)]+)\\)", txt),
-            .extract_pkgname("require\\(([^\\)]+)\\)", txt),
-            .extract_pkgname("([^\\( -,=+/:`]+)::", txt))
+        txt <- CodeDepends::readScript(all.rmds[i])
+        all.info <- CodeDepends::scriptInfo(txt)
+        collated <- c(collated, unlist(lapply(all.info, slot, "libraries")))
     }
     
     sort(unique(collated))

@@ -14,6 +14,9 @@ Imports:
     utils,
     callr,
     rmarkdown
+Suggests:
+    testthat,
+    CodeDepends 
 License: GPL-3
 VignetteBuilder: knitr
 RoxygenNote: 7.1.0
