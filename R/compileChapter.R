@@ -37,8 +37,8 @@ compileChapter <- function(path) {
     )
 
     if (is(E, "try-error")) {
-        message(sprintf("> %s\n", readLines(logfile)))
-        stop(sprintf("failed to compile '%s'", f))
+        message(sprintf("# %s\n", readLines(logfile)))
+        stop(sprintf("failed to compile '%s'", path))
     }
 
     invisible(NULL)
