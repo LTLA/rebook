@@ -28,22 +28,17 @@
 #' scrapeDependencies(tempdir())
 #'
 #' @export
+#' @importFrom CodeDepends readScript scriptInfo
+#' @importFrom methods slot
 scrapeDependencies <- function(dir) {
     all.rmds <- list.files(dir, recursive=TRUE, full.names=TRUE, pattern="\\.Rmd$")
     collated <- character(0)
     
     for (i in seq_along(all.rmds)) {
-        txt <- CodeDepends::readScript(all.rmds[i])
-        all.info <- CodeDepends::scriptInfo(txt)
+        txt <- readScript(all.rmds[i])
+        all.info <- scriptInfo(txt)
         collated <- c(collated, unlist(lapply(all.info, slot, "libraries")))
     }
     
     sort(unique(collated))
 }
-
-.extract_pkgname <- function(pattern, txt) {
-    keep <- grep(pattern, txt)
-    matching <- regmatches(txt, regexpr(pattern, txt))
-    sub(pattern, "\\1", matching) 
-}
-

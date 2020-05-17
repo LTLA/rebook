@@ -39,6 +39,7 @@
 #' @export
 #' @importFrom callr r
 #' @importFrom rmarkdown render
+#' @importFrom methods is
 compileChapter <- function(path, cache=TRUE) {
     logfile <- tempfile(fileext=".log")
     on.exit(unlink(logfile))
