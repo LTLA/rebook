@@ -3,7 +3,7 @@
 #' Extract specific R objects from the knitr cache of a previously compiled Rmarkdown file (the \dQuote{donor})
 #' so that it can be used in the compilation process of another Rmarkdown file (the \dQuote{acceptor}).
 #'
-#' @param donor String containing a regular expression to use to identify the donor Rmarkdown file.
+#' @param donor String containing the name of the donor Rmarkdown file.
 #' @param locations Character vector containing the possible locations to search for the donor file.
 #' @param chunk String containing the name of the requested chunk.
 #' @param objects Character vector containing variable names for one or more objects to be extracted.
@@ -32,7 +32,6 @@
 #'
 #' The donor report is found by searching successive \code{locations} for a file that matches \code{donor}.
 #' It will use the first file that is found in this manner.
-#' A flexible search enables this system to continue operating when the path changes due to \code{\link{setupBookChapters}}.
 #'
 #' Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 #' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileCached}}.
@@ -84,13 +83,12 @@ extractCached <- function(donor, chunk, objects, locations=".", envir=topenv(par
 
 .obtain_cache_path <- function(donor, locations) {
     for (l in locations) {
-        possible <- list.files(l, pattern=donor, full.names=TRUE)
-        if (length(possible)==1L) {
+        possible <- file.path(l, donor)
+        if (file.exists(possible)) {
             return(possible)
-        } else if (length(possible) > 1L) {
-            stop("more than one match for '", donor, "' in '", l, "'")
         }
     }
+    stop("'donor' file not found")
 }
 
 .extract_chunks <- function(fname, chunk) {

@@ -13,7 +13,7 @@ extractCached(
 )
 }
 \arguments{
-\item{donor}{String containing a regular expression to use to identify the donor Rmarkdown file.}
+\item{donor}{String containing the name of the donor Rmarkdown file.}
 
 \item{chunk}{String containing the name of the requested chunk.}
 
@@ -55,7 +55,6 @@ this is useful for figure-generating chunks that need to be referenced inside th
 
 The donor report is found by searching successive \code{locations} for a file that matches \code{donor}.
 It will use the first file that is found in this manner.
-A flexible search enables this system to continue operating when the path changes due to \code{\link{setupBookChapters}}.
 
 Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileCached}}.
