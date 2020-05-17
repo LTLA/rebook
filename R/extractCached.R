@@ -3,8 +3,7 @@
 #' Extract specific R objects from the knitr cache of a previously compiled Rmarkdown file (the \dQuote{donor})
 #' so that it can be used in the compilation process of another Rmarkdown file (the \dQuote{acceptor}).
 #'
-#' @param donor String containing the name of the donor Rmarkdown file.
-#' @param locations Character vector containing the possible locations to search for the donor file.
+#' @param path String containing the path to the donor Rmarkdown file.
 #' @param chunk String containing the name of the requested chunk.
 #' @param objects Character vector containing variable names for one or more objects to be extracted.
 #' @param envir Environment where the loaded objects should be stored.
@@ -18,10 +17,8 @@
 #' so the donor Rmarkdown file is subject to several constraints:
 #' \itemize{
 #' \item All chunks involved in generating the requested objects (indirectly or otherwise) should be named.
-#' \item All named chunks should be executed, i.e., no \code{eval=FALSE}.
+#' \item All named chunks should be executed; \code{eval=FALSE} is not respected.
 #' \item All relevant code occurs within triple backticks, i.e., any inline code should be read-only.
-#' \item All triple backticks occur at the start of the line, i.e., no code nested in list elements.
-#' \item Any assignment or modifications to variables are done \emph{correctly} with \code{<-}.
 #' }
 #' 
 #' Unnamed chunks are allowed but cannot be referenced and will not be shown in the output of this function.
@@ -29,9 +26,6 @@
 #' i.e., code in unnamed chunks should be \dQuote{read-only} with respect to variables in the named chunks.
 #' Chunks with names starting with \code{unref-} are considered to be the same as unnamed chunks and will be ignored;
 #' this is useful for figure-generating chunks that need to be referenced inside the donor report.
-#'
-#' The donor report is found by searching successive \code{locations} for a file that matches \code{donor}.
-#' It will use the first file that is found in this manner.
 #'
 #' Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 #' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileCached}}.
@@ -41,22 +35,23 @@
 #' based on the code in the named chunks of the donor Rmarkdown file.
 #' 
 #' @author Aaron Lun
-#'
+#' @examples
+#' # Mocking up an Rmarkdown report.
+#' 
 #' @seealso
 #' \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.
 #'
 #' \code{\link{compileChapter}}, to compile a Rmarkdown report to generate the cache.
 #' 
 #' @export
-extractCached <- function(donor, chunk, objects, locations=".", envir=topenv(parent.frame())) {
-    fname <- .obtain_cache_path(donor, locations)
-    prefix <- sub("\\.rmd$", "", fname, ignore.case = TRUE)
+extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
+    prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
     cache_path <- file.path(paste0(prefix, "_cache"), "html/")
     if (!file.exists(cache_path)) {
-        compileChapter(fname)
+        compileChapter(path)
     }
 
-    chunks <- .extract_chunks(fname, chunk)
+    chunks <- .extract_chunks(path, chunk)
     .load_objects(cache_path, chunks, objects=objects, envir=envir)
 
     # Pretty-printing the chunks.
@@ -81,20 +76,11 @@ extractCached <- function(donor, chunk, objects, locations=".", envir=topenv(par
     invisible(NULL)
 }
 
-.obtain_cache_path <- function(donor, locations) {
-    for (l in locations) {
-        possible <- file.path(l, donor)
-        if (file.exists(possible)) {
-            return(possible)
-        }
-    }
-    stop("'donor' file not found")
-}
-
-.extract_chunks <- function(fname, chunk) {
-    # Extracting chunks until we get to the one with 'chunk'.
+.extract_chunks <- function(fname, chunk) 
+# Extracting chunks until we get to the one with 'chunk'.
+{
     all.lines <- readLines(fname)
-    named.pattern <- "^```\\{r ([^,]+).*\\}"
+    named.pattern <- "^ *```\\{r ([^,]+).*\\}"
     opens <- grep(named.pattern, all.lines)
 
     chunks <- list()
@@ -106,7 +92,7 @@ extractCached <- function(donor, chunk, objects, locations=".", envir=topenv(par
         }
 
         available <- all.lines[(opens[i]+1):j]
-        end <- grep("^```\\s*$", available)
+        end <- grep("^ *```\\s*$", available)
         if (length(end)==0L) {
             stop("unterminated chunk")         
         } 
@@ -116,40 +102,44 @@ extractCached <- function(donor, chunk, objects, locations=".", envir=topenv(par
             current.chunk <- available[seq_len(end[1]-1L)]
             chunks[[curname]] <- current.chunk
         }
+
+        if (curname==chunk) {
+            return(chunks)
+        }
     }
 
-    m <- match(chunk, names(chunks))
-    if (is.na(m)) {
-        stop(sprintf("could not find chunk '%s'", chunk))
-    }
-    chunks[seq_len(m)]
+    stop(sprintf("could not find chunk '%s'", chunk))
 }
 
 #' @importFrom knitr opts_knit load_cache
+#' @importFrom CodeDepends readScript getInputs
 .load_objects <- function(cache_path, chunks, objects, envir) {
-    # This is required so that the cache_path is interpreted correctly,
-    # as load_cache will 'cd' into 'output.dir' and break relative paths. 
+    # This is required so that the cache_path is interpreted correctly 
+    # outside of a Rmarkdown compilation.
     if (is.null(old <- opts_knit$get("output.dir"))) {
         opts_knit$set(output.dir=".")
         on.exit(opts_knit$set(output.dir=old))
     }
 
-    # Collecting all variable names and loading them into the global namespace.
-    for (obj in objects) {
-        assign.pattern <- paste0(obj, ".*<-")
-        found <- FALSE
+    # Setting 'rev' to get the last chunk in which 'obj' was on the left-hand side of assignment.
+    for (x in rev(names(chunks))) {
+        unpacked <- readScript(txt=chunks[[x]], type="R")
+        deparsed <- getInputs(unpacked)
+        lhs <- unlist(lapply(deparsed, function(x) c(x@outputs, x@updates)))
 
-        # Setting 'rev' to get the last chunk in which 'obj' was on the left-hand side of assignment.
-        for (x in rev(names(chunks))) {
-            if (found <- any(grepl(assign.pattern, chunks[[x]]))) {
-                assign(obj, envir=envir, value=load_cache(label=x, object=obj, path=cache_path))
-                break
-            }
+        present <- intersect(objects, lhs)
+        for (p in present) {
+            assign(p, envir=envir, value=load_cache(label=x, object=p, path=cache_path))
         }
 
-        if (!found) {
-            stop(sprintf("could not find '%s'", obj))
+        objects <- setdiff(objects, present)
+        if (length(objects)==0L) {
+            break
         }
+    }
+
+    if (length(objects)) {
+        stop(sprintf("could not find '%s'", objects[1]))
     }
 
     invisible(NULL)
