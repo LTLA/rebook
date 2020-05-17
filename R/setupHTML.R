@@ -15,6 +15,7 @@
 #'
 #' \code{\link{extractCached}} and \code{\link{prettySessionInfo}}, which use the custom collapsible class.
 #'
+#' @inherit prettySessionInfo examples
 #' @export
 setupHTML <- function() {
     cat('<script>

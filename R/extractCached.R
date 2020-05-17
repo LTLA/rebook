@@ -37,6 +37,56 @@
 #' @author Aaron Lun
 #' @examples
 #' # Mocking up an Rmarkdown report.
+#' donor <- tempfile(fileext=".Rmd")
+#' write(file=donor, "```{r some-monsters}
+#' destoroyah <- 1
+#' mecha.king.ghidorah <- 2
+#' ```
+#'                                                                 
+#' ```{r more-monsters}
+#' space.godzilla <- 3
+#' ```
+#'
+#' ```{r}
+#' msg <- 'I am not referenced.'
+#' ```
+#'
+#' ```{r unref-figure}
+#' plot(1, 1, main='I am also not referenced.')
+#' ```
+#' 
+#' ```{r even-more-monsters}
+#' megalon <- 4
+#' ```")
+#' 
+#' # Extracting stuff from it in another report.
+#' acceptor <- tempfile(fileext=".Rmd")
+#' dpb <- deparse(basename(donor))
+#' write(file=acceptor, sprintf("```{r, echo=FALSE, results='asis'}
+#' chapterPreamble()
+#' ```
+#'                                                                 
+#' ```{r, results='asis', echo=FALSE}
+#' extractCached(%s, chunk='more-monsters', 
+#'    objects=c('space.godzilla', 'destoroyah'))
+#' ```
+#'
+#' ```{r}
+#' space.godzilla * destoroyah
+#' ```
+#'
+#' ```{r, results='asis', echo=FALSE}
+#' extractCached(%s, chunk='even-more-monsters', 
+#'    objects=c('megalon', 'mecha.king.ghidorah'))
+#' ```
+#'
+#' ```{r}
+#' mecha.king.ghidorah * megalon
+#' ```", dpb, dpb))
+#' 
+#' rmarkdown::render(acceptor)
+#'
+#' if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
 #' 
 #' @seealso
 #' \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.

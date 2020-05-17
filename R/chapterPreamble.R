@@ -18,6 +18,28 @@
 #' 
 #' @author Aaron Lun
 #' 
+#' @examples
+#' tmp <- tempfile(fileext=".Rmd")
+#' write(file=tmp, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#'
+#' ```{r}
+#' pi # four digits!
+#' ```
+#'
+#' ```{r}
+#' warning('ASDASD') # warnings and messages are not saved in the HTML.
+#' ```
+#'
+#' ```{r, results='asis'}
+#' prettySessionInfo()
+#' ```")
+#'
+#' rmarkdown::render(tmp)
+#'
+#' if (interactive()) browseURL(sub(".Rmd$", ".html", tmp))
+#'
 #' @export
 #' @importFrom knitr opts_chunk
 chapterPreamble <- function(cache = FALSE) {

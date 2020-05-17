@@ -15,6 +15,17 @@
 #' so these should be explicitly mentioned in a standalone code chunk to be captured.
 #'
 #' @author Aaron Lun
+#' tmp <- tempfile(fileext=".Rmd")
+#' write(file=tmp, "```{r}
+#' A::a()
+#' ```
+#'
+#' ```{r}
+#' library(B)
+#' require(C)
+#' ```")
+#'
+#' scrapeDependencies(tempdir())
 #'
 #' @export
 scrapeDependencies <- function(dir) {

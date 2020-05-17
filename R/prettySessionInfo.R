@@ -9,6 +9,20 @@
 #' \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.
 #' 
 #' @export
+#' @examples
+#' tmp <- tempfile(fileext=".Rmd")
+#' write(file=tmp, "```{r, echo=FALSE, results='asis'}
+#' rebook::setupHTML()
+#' ```
+#'
+#' ```{r, results='asis'}
+#' prettySessionInfo()
+#' ```")
+#'
+#' rmarkdown::render(tmp)
+#'
+#' if (interactive()) browseURL(sub(".Rmd$", ".html", tmp))
+#'
 #' @importFrom utils capture.output sessionInfo
 prettySessionInfo <- function() {
     ## grab session info printed output
