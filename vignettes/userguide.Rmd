@@ -23,7 +23,7 @@ chapterPreamble()
 This package implements utilities for an opinionated way of re-using content in `r CRANpkg("bookdown")` books.
 The general idea is that you have objects from a "donor" chapter that you want to re-use in another "acceptor" chapter,
 but you do not want to repeat the code from the former in the latter.
-Most of these ideas were developed in the process for the [Orchestrating single-cell analysis](osca.bioconductor.org) book,
+Most of these ideas were developed in the process for the [Orchestrating single-cell analysis](https://osca.bioconductor.org) book,
 but are hopefully applicable to other projects.
 
 # Exploiting the cache
@@ -33,13 +33,21 @@ This allows us to retrieve arbitrary objects from the cache in later code,
 thus avoiding the need to (i) re-type the code required to generate the object
 and (ii) repeat the possibly time-consuming compilation process.
 
-To perform this retrieval inside the acceptor chapter, 
+To demonstrate, we will use an example donor chapter from this package.
+We copy it to a temporary location so as avoid modifying the contents of the installation directory.
+
+```{r}
+example0 <- system.file("example", "test.Rmd", package="rebook")
+example <- tempfile(fileext=".Rmd")
+file.copy(example0, example)
+```
+
+To perform this retrieval inside some acceptor chapter (in this case, this vignette),
 we call the `extractCached()` function on the location of the donor chapter.
 This will search through the cache to identify the object and pull it out into the current R session.
 For example:
 
 ```{r, results="asis"}
-example <- system.file("example", "test.Rmd", package="rebook")
 extractCached(example, chunk="godzilla-1954", object="godzilla")
 ```
 
