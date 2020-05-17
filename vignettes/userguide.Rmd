@@ -1,0 +1,105 @@
+---
+title: Reusing book contents
+author:
+- name: Aaron Lun
+  email: infinite.monkeys.with.keyboards@gmail.com
+date: "Revised: May 16, 2020"
+output:
+  html_document
+package: rebook 
+vignette: >
+  %\VignetteIndexEntry{01. Reusing book content}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=FALSE, results="asis"}
+library(rebook)
+chapterPreamble()
+```
+
+# Introduction
+
+This package implements utilities for an opinionated way of re-using content in `r CRANpkg("bookdown")` books.
+The general idea is that you have objects from a "donor" chapter that you want to re-use in another "acceptor" chapter,
+but you do not want to repeat the code from the former in the latter.
+Most of these ideas were developed in the process for the [Orchestrating single-cell analysis](osca.bioconductor.org) book,
+but are hopefully applicable to other projects.
+
+# Exploiting the cache
+
+The general idea here is that we compile potential donor chapters with `r CRANpkg("knitr")` caching turned on.
+This allows us to retrieve arbitrary objects from the cache in later code,
+thus avoiding the need to (i) re-type the code required to generate the object
+and (ii) repeat the possibly time-consuming compilation process.
+
+To perform this retrieval inside the acceptor chapter, 
+we call the `extractCached()` function on the location of the donor chapter.
+This will search through the cache to identify the object and pull it out into the current R session.
+For example:
+
+```{r, results="asis"}
+extractCached("test.Rmd", chunk="godzilla-1954", object="godzilla")
+```
+
+```{r}
+godzilla
+```
+
+Multiple objects can be retrieved in this manner:
+
+```{r, results="asis"}
+extractCached("test.Rmd", chunk="ghidorah-1964", object=c("godzilla", "ghidorah"))
+```
+
+```{r}
+godzilla
+ghidorah
+```
+
+Searching is done by chunk so as to disambiguate between objects with the same name across multiple chunks.
+This includes objects that are repeatedly modified, allowing us to retrieve the object different states within the donor.
+For example, we can pull out the same named variable but with a different value:
+
+```{r, results="asis"}
+extractCached("test.Rmd", chunk="godzilla-2014", object="godzilla")
+```
+
+```{r}
+godzilla
+```
+
+We can also pull out objects that are not actually referenced in the requested chunk,
+as long as it was created in one of the preceding chunks:
+
+```{r, results="asis"}
+extractCached("test.Rmd", chunk="godzilla-2014", object=c("mechagodzilla", "godzilla"))
+```
+
+```{r}
+godzilla
+mechagodzilla
+```
+
+If the donor chapter has not yet been compiled,
+`extractCached()` will compile it to create the cache from which to extract content.
+This allows us to refer to donor chapters that follow the current acceptor chapter;
+no extra time is used as the `r CRANpkg("bookdown")` compilation of the donor can simply use the newly cached content.
+
+Note that this system imposes some restrictions on the formatting of the code chunks in the donor report;
+see `?extractCached` for more details.
+
+# Pretty printing 
+
+As one can see from the examples above,
+`extractCached()` will create a collapsible HTML element containing the code used to generate the requested object(s).
+This informs reader about the provenance of the object without overwhelming them.
+The collapsible element class is defined using code in `chapterPreamble()`,
+which should be called at the top of every chapter to set up the compilation environment.
+This is also used to achieve pretty `sessionInfo()` printing, as shown below.
+
+# Session info
+
+```{r, results="asis"}
+prettySessionInfo()
+```

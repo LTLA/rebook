@@ -1,11 +1,10 @@
-Package: bookup
+Package: rebook 
 Version: 0.99.0
-Title: Book-building Utilities for Bioconductor
+Title: Re-using Content in Bioconductor Books
 Authors@R:
     person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))
 Description: 
-    Provides utilities to generate bookdown chapters from Rmarkdown files and
-    to compile said books on the Bioconductor build system.
+    Provides utilities to re-use content within and across Bioconductor books.
 Imports:
     knitr,
     BiocStyle,

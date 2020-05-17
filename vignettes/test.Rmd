@@ -1,0 +1,63 @@
+---
+title: A test chapter
+author:
+- name: Aaron Lun
+  email: infinite.monkeys.with.keyboards@gmail.com
+date: "Revised: May 16, 2020"
+output:
+  html_document
+package: rebook 
+vignette: >
+  %\VignetteIndexEntry{02. Test chapter}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=FALSE, results="asis"}
+library(rebook)
+chapterPreamble(cache=TRUE)
+```
+
+Named chunks will be searched by `extractCached()` to retrieve the requested object:
+
+```{r godzilla-1954}
+godzilla <- "RAWR!"
+```
+
+Unnamed chunks will not be searched or reported, 
+so make sure that they are "read-only" with respect to variables in the named chunks;
+otherwise the code reported by `extractCached()` will not fully describe the nature of the object.
+
+```{r}
+msg <- "I am hidden from extractCached()"
+```
+
+Similarly, chunk names starting with `unref-` are ignored.
+This is useful for read-only chunks that produce figures in the donor chapter (Figure \@ref(fig:unref-figure))
+but should not be reported by `extractCached()`.
+
+```{r unref-figure}
+plot(1:10, 1:10, main="I am also hidden.")
+```
+
+Assignments should be performed using `<-` (i.e., the correct way).
+Assignments with `=` are simply ignored and will not be picked up as objects by `extractCached()`.
+
+```{r ghidorah-1964}
+godzilla <- "GAO GAO"
+ghidorah <- "pew pew"
+mothra = "Oh, I'm not in this one." # WRONG!
+```
+
+The same variable can appear multiple times in different chunks;
+`extractCached()` will be able to disambiguate the reference by looking for the requested chunk.
+
+```{r godzilla-1978}
+godzilla <- "rawr rawr"
+mechagodzilla <- "beep beep"
+```
+
+```{r godzilla-2014}
+godzilla <- "I'm back."
+muto <- "Hi."
+```
