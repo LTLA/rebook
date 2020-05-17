@@ -23,6 +23,6 @@
 chapterPreamble <- function(cache = FALSE) {
     opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, cache = cache)
     options(digits = 4)
-    attachNamespace("BiocStyle")
+    try(attachNamespace("BiocStyle"), silent=TRUE)
     setupHTML()
 }

@@ -28,7 +28,7 @@ compileChapter <- function(path) {
 
     E <- try(
         r(function(input) { rmarkdown::render(input) }, 
-            args = list(input = f), 
+            args = list(input = path), 
             stdout=logfile, 
             stderr=logfile, 
             spinner=FALSE

@@ -50,7 +50,7 @@
 #' @export
 extractCached <- function(donor, chunk, objects, locations=".", envir=topenv(parent.frame())) {
     fname <- .obtain_cache_path(donor, locations)
-    prefix <- sub("\\.rmd$", "", fname, ignore.case = FALSE)
+    prefix <- sub("\\.rmd$", "", fname, ignore.case = TRUE)
     cache_path <- file.path(paste0(prefix, "_cache"), "html/")
     if (!file.exists(cache_path)) {
         compileChapter(fname)
