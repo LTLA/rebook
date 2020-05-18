@@ -28,7 +28,7 @@
 #' this is useful for figure-generating chunks that need to be referenced inside the donor report.
 #'
 #' Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
-#' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileCached}}.
+#' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileChapter}}.
 #'
 #' @return Variables with names \code{objects} are created in \code{envir}.
 #' A markdown chunk (wrapped in a collapsible element) is printed that contains all commands needed to generate those objects, 
