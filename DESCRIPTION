@@ -1,4 +1,4 @@
-Package: rebook 
+Package: rebook
 Version: 0.99.0
 Date: 2020-05-07
 Title: Re-using Content in Bioconductor Books
@@ -9,14 +9,15 @@ Description:
     This is mostly based on functionality developed while writing the OSCA book,
     but generalized for potential use in other large books with heavy compute.
 Imports:
-    knitr,
-    BiocStyle,
     utils,
+    methods,
+    knitr,
     callr,
-    rmarkdown
+    rmarkdown,
+    CodeDepends,
+    BiocStyle
 Suggests:
-    testthat,
-    CodeDepends 
+    testthat
 License: GPL-3
 VignetteBuilder: knitr
 RoxygenNote: 7.1.0
