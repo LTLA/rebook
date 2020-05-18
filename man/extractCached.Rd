@@ -4,22 +4,14 @@
 \alias{extractCached}
 \title{Extract cached objects}
 \usage{
-extractCached(
-  donor,
-  chunk,
-  objects,
-  locations = ".",
-  envir = topenv(parent.frame())
-)
+extractCached(path, chunk, objects, envir = topenv(parent.frame()))
 }
 \arguments{
-\item{donor}{String containing the name of the donor Rmarkdown file.}
+\item{path}{String containing the path to the donor Rmarkdown file.}
 
 \item{chunk}{String containing the name of the requested chunk.}
 
 \item{objects}{Character vector containing variable names for one or more objects to be extracted.}
-
-\item{locations}{Character vector containing the possible locations to search for the donor file.}
 
 \item{envir}{Environment where the loaded objects should be stored.}
 }
@@ -41,10 +33,8 @@ The parser in this function is rather limited,
 so the donor Rmarkdown file is subject to several constraints:
 \itemize{
 \item All chunks involved in generating the requested objects (indirectly or otherwise) should be named.
-\item All named chunks should be executed, i.e., no \code{eval=FALSE}.
+\item All named chunks should be executed; \code{eval=FALSE} is not respected.
 \item All relevant code occurs within triple backticks, i.e., any inline code should be read-only.
-\item All triple backticks occur at the start of the line, i.e., no code nested in list elements.
-\item Any assignment or modifications to variables are done \emph{correctly} with \code{<-}.
 }
 
 Unnamed chunks are allowed but cannot be referenced and will not be shown in the output of this function.
@@ -53,11 +43,62 @@ i.e., code in unnamed chunks should be \dQuote{read-only} with respect to variab
 Chunks with names starting with \code{unref-} are considered to be the same as unnamed chunks and will be ignored;
 this is useful for figure-generating chunks that need to be referenced inside the donor report.
 
-The donor report is found by searching successive \code{locations} for a file that matches \code{donor}.
-It will use the first file that is found in this manner.
-
 Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
-If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileCached}}.
+If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileChapter}}.
+}
+\examples{
+# Mocking up an Rmarkdown report.
+donor <- tempfile(fileext=".Rmd")
+write(file=donor, "```{r some-monsters}
+destoroyah <- 1
+mecha.king.ghidorah <- 2
+```
+                                                                
+```{r more-monsters}
+space.godzilla <- 3
+```
+
+```{r}
+msg <- 'I am not referenced.'
+```
+
+```{r unref-figure}
+plot(1, 1, main='I am also not referenced.')
+```
+
+```{r even-more-monsters}
+megalon <- 4
+```")
+
+# Extracting stuff from it in another report.
+acceptor <- tempfile(fileext=".Rmd")
+dpb <- deparse(basename(donor))
+write(file=acceptor, sprintf("```{r, echo=FALSE, results='asis'}
+chapterPreamble()
+```
+                                                                
+```{r, results='asis', echo=FALSE}
+extractCached(\%s, chunk='more-monsters', 
+   objects=c('space.godzilla', 'destoroyah'))
+```
+
+```{r}
+space.godzilla * destoroyah
+```
+
+```{r, results='asis', echo=FALSE}
+extractCached(\%s, chunk='even-more-monsters', 
+   objects=c('megalon', 'mecha.king.ghidorah'))
+```
+
+```{r}
+mecha.king.ghidorah * megalon
+```", dpb, dpb))
+
+rmarkdown::render(acceptor)
+
+if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
+
 }
 \seealso{
 \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.

@@ -10,6 +10,21 @@ prettySessionInfo()
 Wraps the session information output chunk in a collapsible HTML element
 so that it doesn't dominate the compiled chapter.
 }
+\examples{
+tmp <- tempfile(fileext=".Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::setupHTML()
+```
+
+```{r, results='asis'}
+prettySessionInfo()
+```")
+
+rmarkdown::render(tmp)
+
+if (interactive()) browseURL(sub(".Rmd$", ".html", tmp))
+
+}
 \seealso{
 \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.
 }

@@ -2,19 +2,22 @@
 % Please edit documentation in R/compileChapter.R
 \name{compileChapter}
 \alias{compileChapter}
-\title{Compile a Rmarkdown report}
+\title{Compile a Rmarkdown file}
 \usage{
-compileChapter(path)
+compileChapter(path, cache = TRUE)
 }
 \arguments{
 \item{path}{String containing a path to an Rmarkdown file.}
+
+\item{cache}{Logical scalar indicating whether the compilation should be cached.}
 }
 \value{
 All files are (re)compiled to generate the corresponding \code{*_cache} directories.
 \code{NULL} is invisibly returned.
 }
 \description{
-Compile a report, typically so that \code{\link{extractCached}} calls work correctly in other reports.
+Compile a Rmarkdown file - typically a chapter of a book - 
+so that \code{\link{extractCached}} calls work correctly in other chapters.
 }
 \details{
 Compilation is performed in an isolated session using \code{\link{r}} from the \pkg{callr} package.
@@ -22,6 +25,22 @@ This ensures that settings from one chapter do not affect the next chapter.
 
 If an error is encountered during compilation of any Rmarkdown file,
 the standard output of \code{\link{render}} leading up to the error is printed out before the function exists.
+}
+\examples{
+tmp <- tempfile(fileext=".Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::chapterPreamble()
+```
+
+```{r}
+rodan <- 1
+```")
+
+compileChapter(tmp)
+
+file.exists(sub(".Rmd$", ".html", tmp)) # output HTML exists.
+file.exists(sub(".Rmd$", "_cache", tmp)) # output cache exists.
+exists("rodan") # FALSE
 }
 \seealso{
 \code{\link{extractCached}}, which calls this function.

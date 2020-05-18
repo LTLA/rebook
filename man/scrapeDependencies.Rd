@@ -19,7 +19,21 @@ Scrape Rmarkdown reports in the book for all required dependencies.
 \details{
 The output of this should be added to the \code{Suggests} field of the book's \code{DESCRIPTION}, 
 to make it easier to simply install all of its required dependencies.
+
+Note that dependencies in inline code sections are not detected,
+so these should be explicitly mentioned in a standalone code chunk to be captured.
 }
 \author{
 Aaron Lun
+tmp <- tempfile(fileext=".Rmd")
+write(file=tmp, "```{r}
+A::a()
+```
+
+```{r}
+library(B)
+require(C)
+```")
+
+scrapeDependencies(tempdir())
 }

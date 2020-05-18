@@ -25,6 +25,29 @@ The \pkg{BiocStyle} package is automatically attached.
 
 HTML elements are defined using \code{\link{setupHTML}}.
 }
+\examples{
+tmp <- tempfile(fileext=".Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::chapterPreamble()
+```
+
+```{r}
+pi # four digits!
+```
+
+```{r}
+warning('ASDASD') # warnings and messages are not saved in the HTML.
+```
+
+```{r, results='asis'}
+prettySessionInfo()
+```")
+
+rmarkdown::render(tmp)
+
+if (interactive()) browseURL(sub(".Rmd$", ".html", tmp))
+
+}
 \author{
 Aaron Lun
 }

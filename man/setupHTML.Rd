@@ -16,6 +16,21 @@ Set up Javascript and CSS elements for the custom collapsible class.
 The custom collapsible class allows us to hide details until requested by the user.
 This improves readability by reducing the clutter in the compiled chapter.
 }
+\examples{
+tmp <- tempfile(fileext=".Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::setupHTML()
+```
+
+```{r, results='asis'}
+prettySessionInfo()
+```")
+
+rmarkdown::render(tmp)
+
+if (interactive()) browseURL(sub(".Rmd$", ".html", tmp))
+
+}
 \seealso{
 \code{\link{chapterPreamble}}, which calls this function.
 
