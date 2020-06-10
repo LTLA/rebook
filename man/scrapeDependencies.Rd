@@ -4,11 +4,14 @@
 \alias{scrapeDependencies}
 \title{Scrape dependencies}
 \usage{
-scrapeDependencies(dir)
+scrapeDependencies(dir, recursive = TRUE, pattern = "\\\\.Rmd$")
 }
 \arguments{
 \item{dir}{String containing the path to the directory containing Rmarkdown reports.
 This is searched recursively for all files ending in \code{".Rmd"}.}
+
+\item{recursive, pattern}{Further arguments to pass to \code{\link{list.files}} 
+when searching for Rmarkdown reports.}
 }
 \value{
 Character vector of required packages.
