@@ -105,8 +105,8 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     .load_objects(cache_path, chunks, objects=objects, envir=envir)
 
     # Pretty-printing the chunks.
-    cat('<button class="aaron-collapse">View history</button>
-<div class="aaron-content">
+    cat('<button class="rebook-collapse">View history</button>
+<div class="rebook-content">
    
 ```r\n')
     first <- TRUE

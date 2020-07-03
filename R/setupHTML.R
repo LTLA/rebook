@@ -20,7 +20,7 @@
 setupHTML <- function() {
     cat('<script>
 document.addEventListener("click", function (event) {
-    if (event.target.classList.contains("aaron-collapse")) {
+    if (event.target.classList.contains("rebook-collapse")) {
         event.target.classList.toggle("active");
         var content = event.target.nextElementSibling;
         if (content.style.display === "block") {
@@ -33,7 +33,7 @@ document.addEventListener("click", function (event) {
 </script>
 
 <style>
-.aaron-collapse {
+.rebook-collapse {
   background-color: #eee;
   color: #444;
   cursor: pointer;
@@ -45,7 +45,7 @@ document.addEventListener("click", function (event) {
   font-size: 15px;
 }
 
-.aaron-content {
+.rebook-content {
   padding: 0 18px;
   display: none;
   overflow: hidden;

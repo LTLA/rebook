@@ -29,8 +29,8 @@ prettySessionInfo <- function() {
     X <- capture.output(sessionInfo())
 
     ## print session info out into collapsible div
-    cat('<button class="aaron-collapse">View session info</button>
-<div class="aaron-content">\n')
+    cat('<button class="rebook-collapse">View session info</button>
+<div class="rebook-content">\n')
     cat(c("```", X, "```"), sep="\n")
     cat("</div>\n")
 
