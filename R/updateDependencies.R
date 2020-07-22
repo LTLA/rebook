@@ -11,11 +11,11 @@
 #'
 #' @author Aaron Lun
 #' @export
-updateDependencies <- function(dir, extra, ...) {
+updateDependencies <- function(dir=".", extra=NULL, ...) {
     scraped <- scrapeDependencies(dir, ...)
     path <- file.path(dir, "DESCRIPTION")
     collected <- read.dcf(path, keep.white=TRUE)
-    collected[,"Imports"] <- paste(c(scraped, extra), collapse=",\n  ")
+    collected[,"Imports"] <- paste(sort(union(scraped, extra)), collapse=",\n  ")
     write.dcf(collected, file=path, width=2000, keep.white="Imports") 
     invisible(NULL)
 }

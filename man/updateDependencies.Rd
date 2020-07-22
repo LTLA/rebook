@@ -4,7 +4,7 @@
 \alias{updateDependencies}
 \title{Update the dependencies}
 \usage{
-updateDependencies(dir, extra, ...)
+updateDependencies(dir = ".", extra = NULL, ...)
 }
 \arguments{
 \item{dir}{String containing the path to the directory containing the book \code{DESCRIPTION} file.}
