@@ -4,9 +4,15 @@
 \alias{createMakefile}
 \title{Create a compilation Makefile}
 \usage{
-createMakefile(dir, pattern = "\\\\.Rmd$", ..., fname = "Makefile")
+createMakefile(dir = ".", pattern = "\\\\.Rmd$", ..., fname = "Makefile")
 }
 \arguments{
+\item{dir}{String containing the path to the directory containing Rmarkdown reports.
+This is searched recursively for all files ending in \code{".Rmd"}.}
+
+\item{pattern}{Further arguments to pass to \code{\link{list.files}} 
+when searching for Rmarkdown reports.}
+
 \item{fname}{String containing the name of the output Makefile.}
 }
 \value{
@@ -15,10 +21,12 @@ and a \code{NULL} is invisibly returned.
 }
 \description{
 Create a Makefile for compiling individual chapters, potentially in parallel.
-This respects the dependencies between chapter as detected by \code{\link{buildReportGraph}}.
+This respects the dependencies between chapter as detected by \code{\link{buildChapterGraph}}.
 }
 \details{
 This uses the markdown output file as an indicator of successful \code{\link{knit}}ting of a chapter.
+Caches are left in the current working directory after the compilation of each report.
+It is assumed that \pkg{bookdown}'s \code{render_book} is smart enough to find and use these caches.
 }
 \author{
 Aaron Lun

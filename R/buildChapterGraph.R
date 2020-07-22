@@ -18,19 +18,19 @@ buildChapterGraph <- function(dir, recursive=TRUE, pattern="\\.Rmd$") {
     for (i in seq_along(all.rmds)) {
         txt <- readScript(file.path(dir, all.rmds[i]), type="Stangled")
         all.info <- scriptInfo(txt)
-        dependencies <- c()
+        dependencies <- character(0)
 
         for (j in seq_along(all.info)) {
             current <- all.info[[j]]
             if ("extractCached" %in% names(current@functions)) {
-                dependencies <- c(dependencies, intersect(current@files, all.rmds))
+                dependencies <- union(dependencies, current@files)
             }
         }
 
-        collated[[all.rmds[i]]] <- dependencies
+        collated[[all.rmds[i]]] <- intersect(dependencies, all.rmds)
     }
 
     all.upstream <- unlist(collated)
-    igraph::make_graph(rbind(all.upstream, rep(names(collated), lengths(collated))), 
-        isolates=setdiff(all.rmds, all.upstream))
+    X <- rbind(all.upstream, rep(names(collated), lengths(collated)))
+    igraph::make_graph(X, isolates=setdiff(all.rmds, X))
  }
