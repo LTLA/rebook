@@ -42,7 +42,7 @@
 #'
 #' @export
 #' @importFrom knitr opts_chunk
-chapterPreamble <- function(cache = FALSE) {
+chapterPreamble <- function(cache = TRUE) {
     opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, cache = cache)
     options(digits = 4)
     try(attachNamespace("BiocStyle"), silent=TRUE)

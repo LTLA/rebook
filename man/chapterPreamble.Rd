@@ -4,7 +4,7 @@
 \alias{chapterPreamble}
 \title{Execute chapter preamble code}
 \usage{
-chapterPreamble(cache = FALSE)
+chapterPreamble(cache = TRUE)
 }
 \arguments{
 \item{cache}{Logical indicating whether to cache code chunks.}
