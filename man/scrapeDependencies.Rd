@@ -26,8 +26,7 @@ to make it easier to simply install all of its required dependencies.
 Note that dependencies in inline code sections are not detected,
 so these should be explicitly mentioned in a standalone code chunk to be captured.
 }
-\author{
-Aaron Lun
+\examples{
 tmp <- tempfile(fileext=".Rmd")
 write(file=tmp, "```{r}
 A::a()
@@ -39,4 +38,8 @@ require(C)
 ```")
 
 scrapeDependencies(tempdir())
+
+}
+\author{
+Aaron Lun
 }

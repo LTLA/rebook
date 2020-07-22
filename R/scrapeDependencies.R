@@ -17,6 +17,7 @@
 #' so these should be explicitly mentioned in a standalone code chunk to be captured.
 #'
 #' @author Aaron Lun
+#' @examples
 #' tmp <- tempfile(fileext=".Rmd")
 #' write(file=tmp, "```{r}
 #' A::a()
