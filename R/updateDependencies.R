@@ -14,8 +14,12 @@
 updateDependencies <- function(dir=".", extra=NULL, ...) {
     scraped <- scrapeDependencies(dir, ...)
     path <- file.path(dir, "DESCRIPTION")
-    collected <- read.dcf(path, keep.white=TRUE)
+
+    # Double read is deliberate to ensure that whitespace is preserved.
+    collected <- read.dcf(path)
+    collected <- read.dcf(path, keep.white=colnames(collected))
+
     collected[,"Imports"] <- paste(sort(union(scraped, extra)), collapse=",\n  ")
-    write.dcf(collected, file=path, width=2000, keep.white="Imports") 
+    write.dcf(collected, file=path, width=2000, keep.white=colnames(collected))
     invisible(NULL)
 }
