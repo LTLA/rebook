@@ -9,14 +9,46 @@
 #'
 #' @author Aaron Lun
 #'
+#' @examples
+#' dir <- tempfile()
+#' dir.create(dir)
+#'
+#' tmp1 <- file.path(dir, "alpha.Rmd")
+#' write(file=tmp1, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#' 
+#' ```{r}
+#' rodan <- 1
+#' ```")
+#'
+#' tmp2 <- file.path(dir, "bravo.Rmd")
+#' write(file=tmp2, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#' 
+#' ```{r}
+#' extractCached('alpha.Rmd')
+#' ```")
+#' 
+#' # Building the chapter graph:
+#' g <- buildChapterGraph(dir)
+#' plot(g)
+#'  
 #' @export
 #' @importFrom CodeDepends readScript scriptInfo
 buildChapterGraph <- function(dir, recursive=TRUE, pattern="\\.Rmd$") {
-    all.rmds <- list.files(dir, recursive=recursive, pattern=pattern)
+    # CodeDepends uses the current WD to check whether a string corresponds to
+    # a file path, hence the need to keep it happy by changing the WD.
+    old <- getwd()
+    setwd(dir)
+    on.exit(setwd(old))
+
+    all.rmds <- list.files(".", recursive=recursive, pattern=pattern)
     collated <- list()
     
     for (i in seq_along(all.rmds)) {
-        txt <- readScript(file.path(dir, all.rmds[i]), type="Stangled")
+        txt <- readScript(all.rmds[i], type="Stangled")
         all.info <- scriptInfo(txt)
         dependencies <- character(0)
 

@@ -14,6 +14,32 @@
 #' Caches are left in the current working directory after the compilation of each report.
 #' It is assumed that \pkg{bookdown}'s \code{render_book} is smart enough to find and use these caches.
 #' 
+#' @examples
+#' dir <- tempfile()
+#' dir.create(dir)
+#'
+#' tmp1 <- file.path(dir, "alpha.Rmd")
+#' write(file=tmp1, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#' 
+#' ```{r}
+#' rodan <- 1
+#' ```")
+#'
+#' tmp2 <- file.path(dir, "bravo.Rmd")
+#' write(file=tmp2, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#' 
+#' ```{r}
+#' extractCached('alpha.Rmd')
+#' ```")
+#' 
+#' # Creating the Makefile:
+#' createMakefile(dir)
+#' cat(readLines(file.path(dir, "Makefile")), sep="\n")
+#' 
 #' @author Aaron Lun
 #' @export
 createMakefile <- function(dir=".", pattern="\\.Rmd$", ..., fname="Makefile") {

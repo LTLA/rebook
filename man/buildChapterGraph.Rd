@@ -23,6 +23,33 @@ where each node is a chapter and is connected to its dependencies by an edge.
 \description{
 Build the dependency graph between chapter based on their \code{\link{extractCached}} calls to each other.
 }
+\examples{
+dir <- tempfile()
+dir.create(dir)
+
+tmp1 <- file.path(dir, "alpha.Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::chapterPreamble()
+```
+
+```{r}
+rodan <- 1
+```")
+
+tmp2 <- file.path(dir, "bravo.Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::chapterPreamble()
+```
+
+```{r}
+extractCached('alpha.Rmd')
+```")
+
+# Building the chapter graph:
+g <- buildChapterGraph(dir)
+plot(g)
+ 
+}
 \author{
 Aaron Lun
 }
