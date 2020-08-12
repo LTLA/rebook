@@ -4,7 +4,7 @@
 \alias{updateDependencies}
 \title{Update the dependencies}
 \usage{
-updateDependencies(dir = ".", extra = NULL, ...)
+updateDependencies(dir = ".", extra = NULL, indent = 4, ...)
 }
 \arguments{
 \item{dir}{String containing the path to the directory containing the book \code{DESCRIPTION} file.}
@@ -12,13 +12,49 @@ updateDependencies(dir = ".", extra = NULL, ...)
 \item{extra}{Character vector of extra packages to be added to imports,
 usually from packages that are in \code{Suggests} and thus not caught directly by \code{\link{scrapeDependencies}}.}
 
+\item{indent}{Integer scalar specifying the size of the indent to use when listing packages.}
+
 \item{...}{Further arguments to pass to \code{\link{scrapeDependencies}}.}
 }
 \value{
 The \code{DESCRIPTION} file in \code{dir} is updated.
+\code{NULL} is invisibly returned.
 }
 \description{
 Update the \code{Imports} field in the book's \code{DESCRIPTION} file with the latest dependencies.
+}
+\examples{
+dir <- tempfile()
+dir.create(dir)
+
+write(file=file.path(dir, "DESCRIPTION"), 
+"Package: son.of.godzilla 
+Version: 0.0.1
+Description: Like godzilla, but smaller.")
+
+tmp <- file.path(dir, "alpha.Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::chapterPreamble()
+```
+
+```{r}
+A::func
+library(C)
+```")
+
+tmp <- file.path(dir, "bravo.Rmd")
+write(file=tmp, "```{r, echo=FALSE, results='asis'}
+rebook::chapterPreamble()
+```
+
+```{r}
+require(D)
+B::more
+```")
+
+updateDependencies(dir)
+cat(readLines(file.path(dir, "DESCRIPTION")), sep="\n")
+
 }
 \author{
 Aaron Lun

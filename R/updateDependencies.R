@@ -5,13 +5,47 @@
 #' @param dir String containing the path to the directory containing the book \code{DESCRIPTION} file.
 #' @param extra Character vector of extra packages to be added to imports,
 #' usually from packages that are in \code{Suggests} and thus not caught directly by \code{\link{scrapeDependencies}}.
+#' @param indent Integer scalar specifying the size of the indent to use when listing packages.
 #' @param ... Further arguments to pass to \code{\link{scrapeDependencies}}.
 #'
 #' @return The \code{DESCRIPTION} file in \code{dir} is updated.
+#' \code{NULL} is invisibly returned.
+#'
+#' @examples
+#' dir <- tempfile()
+#' dir.create(dir)
+#'
+#' write(file=file.path(dir, "DESCRIPTION"), 
+#' "Package: son.of.godzilla 
+#' Version: 0.0.1
+#' Description: Like godzilla, but smaller.")
+#'
+#' tmp <- file.path(dir, "alpha.Rmd")
+#' write(file=tmp, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#'
+#' ```{r}
+#' A::func
+#' library(C)
+#' ```")
+#' 
+#' tmp <- file.path(dir, "bravo.Rmd")
+#' write(file=tmp, "```{r, echo=FALSE, results='asis'}
+#' rebook::chapterPreamble()
+#' ```
+#'
+#' ```{r}
+#' require(D)
+#' B::more
+#' ```")
+#' 
+#' updateDependencies(dir)
+#' cat(readLines(file.path(dir, "DESCRIPTION")), sep="\n")
 #'
 #' @author Aaron Lun
 #' @export
-updateDependencies <- function(dir=".", extra=NULL, ...) {
+updateDependencies <- function(dir=".", extra=NULL, indent=4, ...) {
     scraped <- scrapeDependencies(dir, ...)
     path <- file.path(dir, "DESCRIPTION")
 
@@ -19,7 +53,13 @@ updateDependencies <- function(dir=".", extra=NULL, ...) {
     collected <- read.dcf(path)
     collected <- read.dcf(path, keep.white=colnames(collected))
 
-    collected[,"Imports"] <- paste(sort(union(scraped, extra)), collapse=",\n  ")
+    to.add <- paste(sort(union(scraped, extra)), collapse=paste0(",\n", strrep(" ", indent)))
+    if ("Imports" %in% colnames(collected)) {
+        collected[,"Imports"] <- to.add
+    } else {
+        collected <- cbind(collected, Imports=to.add)
+    }
+
     write.dcf(collected, file=path, width=2000, keep.white=colnames(collected))
     invisible(NULL)
 }
