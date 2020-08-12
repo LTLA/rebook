@@ -36,3 +36,29 @@ test_that("scrapeDependencies works as expected", {
         "IJKLM", "N", "O", "P", "Q", "R", "S", "T", "U", "V"))
 })
 
+
+test_that("updateDependencies works as expected", {
+    write(file=file.path(testdir, "DESCRIPTION"),
+"Package: son.of.godzilla
+Version: 0.0.1
+Description: Like godzilla, but smaller.")
+    
+    updateDependencies(testdir)
+    out <- read.dcf(file.path(testdir, "DESCRIPTION"))
+    imports <- strsplit(out[,"Imports"], ",\\s+")[[1]]
+    expect_true("O" %in% imports)
+    expect_true("IJKLM" %in% imports)
+
+    write(file=file.path(testdir, "DESCRIPTION"),
+"Package: son.of.godzilla
+Version: 0.0.1
+Description: Like godzilla, but smaller.
+Imports: nothing")
+
+    updateDependencies(testdir)
+    out <- read.dcf(file.path(testdir, "DESCRIPTION"))
+    imports <- strsplit(out[,"Imports"], ",\\s+")[[1]]
+    expect_true("O" %in% imports)
+    expect_true("IJKLM" %in% imports)
+})
+
