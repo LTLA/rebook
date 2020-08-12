@@ -2,11 +2,11 @@
 # library(testthat); library(rebook); source("test-other.R")
 
 test_that("setupHTML works as expected", {
-    expect_output(setupHTML(), "aaron-collapse")
+    expect_output(setupHTML(), "rebook-collapse")
 })
 
 test_that("chapterPreamble works as expected", {
-    expect_output(chapterPreamble(), "aaron-collapse")
+    expect_output(chapterPreamble(), "rebook-collapse")
     expect_identical(knitr::opts_chunk$get("error"), FALSE)
     expect_identical(knitr::opts_chunk$get("message"), FALSE)
     expect_identical(knitr::opts_chunk$get("warning"), FALSE)

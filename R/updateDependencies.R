@@ -8,7 +8,12 @@
 #' @param indent Integer scalar specifying the size of the indent to use when listing packages.
 #' @param ... Further arguments to pass to \code{\link{scrapeDependencies}}.
 #'
-#' @return The \code{DESCRIPTION} file in \code{dir} is updated.
+#' @details
+#' The book \code{DESCRIPTION} is useful for quick installation of all packages required across all chapters.
+#' For example, it is used by \url{https://github.com/LTLA/TrojanBookBuilder} to populate a trojan package's dependencies,
+#' ensuring that all packages are available when the book itself is compiled.
+#'
+#' @return The \code{Imports} field in the \code{DESCRIPTION} file in \code{dir} is updated.
 #' \code{NULL} is invisibly returned.
 #'
 #' @examples

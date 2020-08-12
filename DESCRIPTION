@@ -5,9 +5,10 @@ Title: Re-using Content in Bioconductor Books
 Authors@R:
     person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))
 Description: 
-    Provides utilities to re-use content within and across Bioconductor books.
-    This is mostly based on functionality developed while writing the OSCA book,
-    but generalized for potential use in other large books with heavy compute.
+    Provides utilities to re-use content across chapters of a  Bioconductor
+    book. This is mostly based on functionality developed while writing the
+    OSCA book, but generalized for potential use in other large books with
+    heavy compute. Also contains some utilities to assist book deployment.
 Imports:
     utils,
     methods,
@@ -21,4 +22,8 @@ Suggests:
     igraph
 License: GPL-3
 VignetteBuilder: knitr
+biocViews:
+    Software,
+    Infrastructure,
+    ReportWriting
 RoxygenNote: 7.1.1

@@ -42,9 +42,10 @@
 #'
 #' @export
 #' @importFrom knitr opts_chunk
+#' @importFrom BiocStyle Biocpkg
 chapterPreamble <- function(cache = TRUE) {
     opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, cache = cache)
     options(digits = 4)
-    try(attachNamespace("BiocStyle"), silent=TRUE)
+    attachNamespace("BiocStyle")
     setupHTML()
 }

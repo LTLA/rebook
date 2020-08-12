@@ -4,7 +4,9 @@
 #' so that it doesn't dominate the compiled chapter.
 #'
 #' @author Aaron Lun
-#' 
+#'
+#' @return Prints a HTML block containing a collapsible section with session information.
+#'
 #' @seealso
 #' \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.
 #' 

@@ -17,11 +17,16 @@ usually from packages that are in \code{Suggests} and thus not caught directly b
 \item{...}{Further arguments to pass to \code{\link{scrapeDependencies}}.}
 }
 \value{
-The \code{DESCRIPTION} file in \code{dir} is updated.
+The \code{Imports} field in the \code{DESCRIPTION} file in \code{dir} is updated.
 \code{NULL} is invisibly returned.
 }
 \description{
 Update the \code{Imports} field in the book's \code{DESCRIPTION} file with the latest dependencies.
+}
+\details{
+The book \code{DESCRIPTION} is useful for quick installation of all packages required across all chapters.
+For example, it is used by \url{https://github.com/LTLA/TrojanBookBuilder} to populate a trojan package's dependencies,
+ensuring that all packages are available when the book itself is compiled.
 }
 \examples{
 dir <- tempfile()

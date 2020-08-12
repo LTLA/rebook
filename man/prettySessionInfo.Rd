@@ -6,6 +6,9 @@
 \usage{
 prettySessionInfo()
 }
+\value{
+Prints a HTML block containing a collapsible section with session information.
+}
 \description{
 Wraps the session information output chunk in a collapsible HTML element
 so that it doesn't dominate the compiled chapter.
