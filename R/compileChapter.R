@@ -7,7 +7,7 @@
 #' @param cache Logical scalar indicating whether the compilation should be cached.
 #'
 #' @return
-#' All files are (re)compiled to generate the corresponding \code{*_cache} directories.
+#' The specified file is (re)compiled to generate the corresponding \code{*_cache} directories.
 #' \code{NULL} is invisibly returned.
 #'
 #' @details

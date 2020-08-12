@@ -1,8 +1,9 @@
 #' Set up HTML elements
 #'
-#' Set up Javascript and CSS elements for the custom collapsible class.
+#' Set up Javascript and CSS elements for each chapter,
+#' primarily for the custom collapsible class.
 #'
-#' @return Prints HTML to set up JS and CSS elements.
+#' @return Prints HTML to standard output set up JS and CSS elements.
 #'
 #' @details
 #' The custom collapsible class allows us to hide details until requested by the user.
@@ -10,6 +11,9 @@
 #'
 #' @author Aaron Lun
 #' 
+#' @examples
+#' setupHTML()
+#'
 #' @seealso
 #' \code{\link{chapterPreamble}}, which calls this function.
 #'

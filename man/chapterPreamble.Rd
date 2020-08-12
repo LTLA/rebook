@@ -10,7 +10,7 @@ chapterPreamble(cache = TRUE)
 \item{cache}{Logical indicating whether to cache code chunks.}
 }
 \value{
-See \code{\link{setupHTML}}.
+HTML is printed to standard output, see \code{\link{setupHTML}}.
 }
 \description{
 Execute code to set up the compilation environment at the start of every chapter.
@@ -21,7 +21,7 @@ and no printing of warnings.
 
 Numbers are printed to 4 digits of precision.
 
-The \pkg{BiocStyle} package is automatically attached.
+The \pkg{BiocStyle} package is automatically attached, primarily for use of \code{\link{Biocpkg}} and similar functions.
 
 HTML elements are defined using \code{\link{setupHTML}}.
 }

@@ -10,11 +10,11 @@
 #' 
 #' Numbers are printed to 4 digits of precision.
 #'
-#' The \pkg{BiocStyle} package is automatically attached.
+#' The \pkg{BiocStyle} package is automatically attached, primarily for use of \code{\link{Biocpkg}} and similar functions.
 #'
 #' HTML elements are defined using \code{\link{setupHTML}}.
 #'
-#' @return See \code{\link{setupHTML}}.
+#' @return HTML is printed to standard output, see \code{\link{setupHTML}}.
 #' 
 #' @author Aaron Lun
 #' 

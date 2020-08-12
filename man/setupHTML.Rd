@@ -7,28 +7,18 @@
 setupHTML()
 }
 \value{
-Prints HTML to set up JS and CSS elements.
+Prints HTML to standard output set up JS and CSS elements.
 }
 \description{
-Set up Javascript and CSS elements for the custom collapsible class.
+Set up Javascript and CSS elements for each chapter,
+primarily for the custom collapsible class.
 }
 \details{
 The custom collapsible class allows us to hide details until requested by the user.
 This improves readability by reducing the clutter in the compiled chapter.
 }
 \examples{
-tmp <- tempfile(fileext=".Rmd")
-write(file=tmp, "```{r, echo=FALSE, results='asis'}
-rebook::setupHTML()
-```
-
-```{r, results='asis'}
-prettySessionInfo()
-```")
-
-rmarkdown::render(tmp)
-
-if (interactive()) browseURL(sub(".Rmd$", ".html", tmp))
+setupHTML()
 
 }
 \seealso{

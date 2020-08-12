@@ -28,7 +28,7 @@ dir <- tempfile()
 dir.create(dir)
 
 tmp1 <- file.path(dir, "alpha.Rmd")
-write(file=tmp, "```{r, echo=FALSE, results='asis'}
+write(file=tmp1, "```{r, echo=FALSE, results='asis'}
 rebook::chapterPreamble()
 ```
 
@@ -37,7 +37,7 @@ rodan <- 1
 ```")
 
 tmp2 <- file.path(dir, "bravo.Rmd")
-write(file=tmp, "```{r, echo=FALSE, results='asis'}
+write(file=tmp2, "```{r, echo=FALSE, results='asis'}
 rebook::chapterPreamble()
 ```
 
