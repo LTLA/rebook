@@ -83,10 +83,11 @@
 #' ```{r}
 #' mecha.king.ghidorah * megalon
 #' ```", dpb, dpb))
-#' 
-#' rmarkdown::render(acceptor)
 #'
-#' if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
+#' if (.Platform$OS.type!="windows") {
+#'     rmarkdown::render(acceptor)
+#'     if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
+#' }
 #' 
 #' @seealso
 #' \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.
@@ -96,23 +97,8 @@
 #' @export
 #' @importFrom knitr opts_knit
 extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
-    if (.Platform$OS.type=="windows") {
-        # Making sure we're in the right directory, because 
-        # knitr on windows just loves to dump things in the WD.
-        oldw <- setwd(dirname(path))
-        on.exit(setwd(oldw))
-        oldd <- opts_knit$get("output.dir")
-        opts_knit$set(output.dir=dirname(path))
-        on.exit(opts_knit$set(output.dir=oldd), add=TRUE)
-
-        # For some reason, knitr dumps ALL report caches into cache/ on
-        # Windows.  Only safe approach is to wipe the prior cache.
-        cache_path <- "cache/"
-        unlink(cache_path, recursive=TRUE)
-    } else {   
-        prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
-        cache_path <- file.path(paste0(prefix, "_cache"), "html/")
-    }
+    prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
+    cache_path <- file.path(paste0(prefix, "_cache"), "html/")
 
     if (!file.exists(cache_path)) {
         compileChapter(path)
