@@ -84,10 +84,8 @@
 #' mecha.king.ghidorah * megalon
 #' ```", dpb, dpb))
 #'
-#' if (.Platform$OS.type!="windows") {
-#'     rmarkdown::render(acceptor)
-#'     if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
-#' }
+#' rmarkdown::render(acceptor)
+#' if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
 #' 
 #' @seealso
 #' \code{\link{setupHTML}} and \code{\link{chapterPreamble}}, to set up the code for the collapsible element.
@@ -98,7 +96,8 @@
 #' @importFrom knitr opts_knit
 extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
-    cache_path <- file.path(paste0(prefix, "_cache"), "html/")
+    cache_path <- file.path(paste0(prefix, "_cache"), "html")
+    cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
 
     if (!file.exists(cache_path)) {
         compileChapter(path)

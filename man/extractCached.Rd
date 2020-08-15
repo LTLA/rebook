@@ -95,10 +95,8 @@ extractCached(\%s, chunk='even-more-monsters',
 mecha.king.ghidorah * megalon
 ```", dpb, dpb))
 
-if (.Platform$OS.type!="windows") {
-    rmarkdown::render(acceptor)
-    if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
-}
+rmarkdown::render(acceptor)
+if (interactive()) browseURL(sub(".Rmd$", ".html", acceptor))
 
 }
 \seealso{

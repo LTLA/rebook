@@ -1,8 +1,6 @@
 # This tests the ability of extractCached to do its job.
 # library(testthat); library(rebook); source("test-cache.R")
 
-skip_on_os("windows")
-
 example <- system.file("example", "test.Rmd", package="rebook")
 tmp <- tempfile()
 tmprmd <- paste0(tmp, ".Rmd")
