@@ -46,6 +46,8 @@
 chapterPreamble <- function(cache = TRUE) {
     opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, cache = cache)
     options(digits = 4)
-    attachNamespace("BiocStyle")
+    if (!"BiocStyle" %in% .packages()) {
+        attachNamespace("BiocStyle")
+    }
     setupHTML()
 }
