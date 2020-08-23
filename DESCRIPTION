@@ -1,14 +1,14 @@
 Package: rebook
-Version: 0.99.4
-Date: 2020-08-15
+Version: 0.99.5
+Date: 2020-08-23
 Title: Re-using Content in Bioconductor Books
 Authors@R:
     person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))
 Description: 
-    Provides utilities to re-use content across chapters of a  Bioconductor
+    Provides utilities to re-use content across chapters of a Bioconductor
     book. This is mostly based on functionality developed while writing the
     OSCA book, but generalized for potential use in other large books with
-    heavy compute. Also contains some utilities to assist book deployment.
+    heavy compute. Also contains some functions to assist book deployment.
 Imports:
     utils,
     methods,
