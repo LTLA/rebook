@@ -163,15 +163,23 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     stop(sprintf("could not find chunk '%s'", chunk))
 }
 
-#' @importFrom knitr opts_knit load_cache
+#' @importFrom knitr opts_knit load_cache knit_global
 #' @importFrom CodeDepends readScript getInputs
 .load_objects <- function(cache_path, chunks, objects, envir) {
     # This is required so that the cache_path is interpreted correctly 
     # outside of a Rmarkdown compilation.
-    if (is.null(old <- opts_knit$get("output.dir"))) {
+    if (is.null(olddir <- opts_knit$get("output.dir"))) {
         opts_knit$set(output.dir=".")
-        on.exit(opts_knit$set(output.dir=old))
+        on.exit(opts_knit$set(output.dir=olddir))
     }
+
+    # Creating a temporary environment for people to dump stuff. I wish - I
+    # REALLY wish - that load_cache would allow me to pass in an environment,
+    # so I didn't have to do ::: magic. But here we are.
+    oldglob <- knit_global()
+    newglob <- new.env()
+    assign("knit_global", envir=knitr:::.knitEnv, value=newglob)
+    on.exit(assign("knit_global", envir=knitr:::.knitEnv, value=oldglob), add=TRUE)
 
     # Setting 'rev' to get the last chunk in which 'obj' was on the left-hand side of assignment.
     for (x in rev(names(chunks))) {
@@ -181,7 +189,8 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
 
         present <- intersect(objects, lhs)
         for (p in present) {
-            assign(p, envir=envir, value=load_cache(label=x, object=p, path=cache_path))
+            val <- load_cache(label=x, object=p, path=cache_path)
+            assign(p, envir=envir, value=val)
         }
 
         objects <- setdiff(objects, present)
