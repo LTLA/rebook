@@ -45,20 +45,20 @@ Description: Like godzilla, but smaller.")
     
     updateDependencies(testdir)
     out <- read.dcf(file.path(testdir, "DESCRIPTION"))
-    imports <- strsplit(out[,"Imports"], ",\\s+")[[1]]
-    expect_true("O" %in% imports)
-    expect_true("IJKLM" %in% imports)
+    suggests <- strsplit(out[,"Suggests"], ",\\s+")[[1]]
+    expect_true("O" %in% suggests)
+    expect_true("IJKLM" %in% suggests)
 
     write(file=file.path(testdir, "DESCRIPTION"),
 "Package: son.of.godzilla
 Version: 0.0.1
 Description: Like godzilla, but smaller.
-Imports: nothing")
+Suggests: nothing")
 
     updateDependencies(testdir)
     out <- read.dcf(file.path(testdir, "DESCRIPTION"))
-    imports <- strsplit(out[,"Imports"], ",\\s+")[[1]]
-    expect_true("O" %in% imports)
-    expect_true("IJKLM" %in% imports)
+    suggests <- strsplit(out[,"Suggests"], ",\\s+")[[1]]
+    expect_true("O" %in% suggests)
+    expect_true("IJKLM" %in% suggests)
 })
 

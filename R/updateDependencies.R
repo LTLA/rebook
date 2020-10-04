@@ -1,11 +1,13 @@
 #' Update the dependencies
 #'
-#' Update the \code{Imports} field in the book's \code{DESCRIPTION} file with the latest dependencies.
+#' Update the book's \code{DESCRIPTION} file with the latest dependencies.
 #'
 #' @param dir String containing the path to the directory containing the book \code{DESCRIPTION} file.
 #' @param extra Character vector of extra packages to be added to imports,
 #' usually from packages that are in \code{Suggests} and thus not caught directly by \code{\link{scrapeDependencies}}.
 #' @param indent Integer scalar specifying the size of the indent to use when listing packages.
+#' @param field String specifying the dependency field to store the packages in.
+#' Defaults to \code{"Suggests"} by convention.
 #' @param ... Further arguments to pass to \code{\link{scrapeDependencies}}.
 #'
 #' @details
@@ -13,7 +15,7 @@
 #' For example, it is used by \url{https://github.com/LTLA/TrojanBookBuilder} to populate a trojan package's dependencies,
 #' ensuring that all packages are available when the book itself is compiled.
 #'
-#' @return The \code{Imports} field in the \code{DESCRIPTION} file in \code{dir} is updated.
+#' @return The specified \code{field} in the \code{DESCRIPTION} file in \code{dir} is updated.
 #' \code{NULL} is invisibly returned.
 #'
 #' @examples
@@ -50,7 +52,7 @@
 #'
 #' @author Aaron Lun
 #' @export
-updateDependencies <- function(dir=".", extra=NULL, indent=4, ...) {
+updateDependencies <- function(dir=".", extra=NULL, indent=4, field="Suggests", ...) {
     scraped <- scrapeDependencies(dir, ...)
     path <- file.path(dir, "DESCRIPTION")
 
@@ -59,10 +61,11 @@ updateDependencies <- function(dir=".", extra=NULL, indent=4, ...) {
     collected <- read.dcf(path, keep.white=colnames(collected))
 
     to.add <- paste(sort(union(scraped, extra)), collapse=paste0(",\n", strrep(" ", indent)))
-    if ("Imports" %in% colnames(collected)) {
-        collected[,"Imports"] <- to.add
+    if (field %in% colnames(collected)) {
+        collected[,field] <- to.add
     } else {
-        collected <- cbind(collected, Imports=to.add)
+        collected <- cbind(collected, PLACEHOLDER=to.add)
+        colnames(collected)[ncol(collected)] <- field
     }
 
     write.dcf(collected, file=path, width=2000, keep.white=colnames(collected))

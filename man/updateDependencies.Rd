@@ -4,7 +4,13 @@
 \alias{updateDependencies}
 \title{Update the dependencies}
 \usage{
-updateDependencies(dir = ".", extra = NULL, indent = 4, ...)
+updateDependencies(
+  dir = ".",
+  extra = NULL,
+  indent = 4,
+  field = "Suggests",
+  ...
+)
 }
 \arguments{
 \item{dir}{String containing the path to the directory containing the book \code{DESCRIPTION} file.}
@@ -14,14 +20,17 @@ usually from packages that are in \code{Suggests} and thus not caught directly b
 
 \item{indent}{Integer scalar specifying the size of the indent to use when listing packages.}
 
+\item{field}{String specifying the dependency field to store the packages in.
+Defaults to \code{"Suggests"} by convention.}
+
 \item{...}{Further arguments to pass to \code{\link{scrapeDependencies}}.}
 }
 \value{
-The \code{Imports} field in the \code{DESCRIPTION} file in \code{dir} is updated.
+The specified \code{field} in the \code{DESCRIPTION} file in \code{dir} is updated.
 \code{NULL} is invisibly returned.
 }
 \description{
-Update the \code{Imports} field in the book's \code{DESCRIPTION} file with the latest dependencies.
+Update the book's \code{DESCRIPTION} file with the latest dependencies.
 }
 \details{
 The book \code{DESCRIPTION} is useful for quick installation of all packages required across all chapters.
