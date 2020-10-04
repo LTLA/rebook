@@ -19,7 +19,8 @@ Imports:
     BiocStyle
 Suggests:
     testthat,
-    igraph
+    igraph,
+    BiocManager
 License: GPL-3
 VignetteBuilder: knitr
 biocViews:
