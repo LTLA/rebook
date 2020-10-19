@@ -1,6 +1,6 @@
 Package: rebook
-Version: 0.99.6
-Date: 2020-10-03
+Version: 0.99.7
+Date: 2020-10-19
 Title: Re-using Content in Bioconductor Books
 Authors@R:
     person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))

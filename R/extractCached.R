@@ -99,7 +99,7 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
     cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
 
-    if (!file.exists(cache_path)) {
+    if (!dir.exists(cache_path)) {
         compileChapter(path)
     }
 
