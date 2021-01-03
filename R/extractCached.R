@@ -106,11 +106,19 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     chunks <- .extract_chunks(path, chunk)
     .load_objects(cache_path, chunks, objects=objects, envir=envir)
 
+    # Trying to link to the original chapter, if we can.
+    attempt.id <- rmd2id(path)
+    blurb <- "View set-up code"
+    if (!is.null(attempt.id)) {
+        blurb <- paste0(blurb, " (Chapter \\@ref(", attempt.id, "))")
+    }
+
     # Pretty-printing the chunks.
-    cat('<button class="rebook-collapse">View history</button>
+    cat(sprintf('<button class="rebook-collapse">%s</button>
 <div class="rebook-content">
    
-```r\n')
+```r\n', blurb))
+
     first <- TRUE
     for (x in names(chunks)) {
         if (!first) {
@@ -121,6 +129,7 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
         cat(sprintf("#--- %s ---#\n", x))
         cat(chunks[[x]], sep="\n")
     }
+
     cat("```
 
 </div>\n")
