@@ -2,6 +2,8 @@
 
 export(buildChapterGraph)
 export(chapterPreamble)
+export(collapseEnd)
+export(collapseStart)
 export(compileChapter)
 export(createMakefile)
 export(deployCustomCSS)

@@ -114,10 +114,8 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     }
 
     # Pretty-printing the chunks.
-    cat(sprintf('<button class="rebook-collapse">%s</button>
-<div class="rebook-content">
-   
-```r\n', blurb))
+    collapseStart(blurb)   
+    cat("```r\n")
 
     first <- TRUE
     for (x in names(chunks)) {
@@ -130,9 +128,8 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
         cat(chunks[[x]], sep="\n")
     }
 
-    cat("```
-
-</div>\n")
+    cat("```\n")
+    collapseEnd()
 
     invisible(NULL)
 }
