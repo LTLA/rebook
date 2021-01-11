@@ -20,6 +20,7 @@ Imports:
 Suggests:
     testthat,
     igraph,
+    XML,
     BiocManager
 License: GPL-3
 VignetteBuilder: knitr
