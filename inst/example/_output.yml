@@ -1,0 +1,10 @@
+bookdown::gitbook:
+  config:
+    fontsettings:
+      theme: white
+    download: null
+    sharing:
+      github: yes
+      facebook: yes
+      twitter: yes
+      linkedin: yes

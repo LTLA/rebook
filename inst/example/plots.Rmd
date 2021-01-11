@@ -1,0 +1,21 @@
+# Looking for plots
+
+```{r test-plot, fig.cap="something something"}
+plot(1,1)
+```
+
+```{r more-plot, fig.cap="something something", fig.width=10}
+plot(1,1)
+```
+
+```{r more-plot2, fig.height=2, fig.cap="something something"}
+plot(1,2)
+```
+
+```{r more-plot3, fig.asp=1, fig.cap="something something"}
+plot(1,1)
+```
+
+```{r blah-plot, fig.wide=TRUE, fig.cap="something something", fig.asp=2}
+plot(1,1)
+```

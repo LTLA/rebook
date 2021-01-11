@@ -1,0 +1,24 @@
+--- 
+title: "Test book"
+documentclass: book
+description: "Test book, testing, testing."
+---
+
+---
+url: "`r 'aaron/wuz/here'`"
+date: "`r Sys.Date()`"
+---
+
+# Welcome {-}
+
+I am a test book! 
+
+`r 1+2+3`
+
+Testing, testing! 
+
+More numbers:`r 2+3+4`.
+
+# Finishing up {-}
+
+Nothing more to see here!

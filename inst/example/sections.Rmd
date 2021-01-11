@@ -1,0 +1,29 @@
+# Section tests {#section-tests}
+
+blah blah
+
+## Subsection is here
+
+some more irrelevant stuff
+
+### Subsubsection is over here
+
+whooppeeeee!
+
+## Another subsection {#aaron-special-id}
+
+Nothing much to say here
+
+### Even more random stuff
+
+Aaron was here
+
+#### Deep nested sub
+
+Super deep nested.
+
+## Unnumbered {-}
+
+```{r}
+sessionInfo()
+```

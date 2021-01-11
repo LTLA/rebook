@@ -1,17 +1,4 @@
----
-title: A test chapter
-author:
-- name: Aaron Lun
-  email: infinite.monkeys.with.keyboards@gmail.com
-date: "Revised: May 16, 2020"
-output:
-  html_document
-package: rebook 
-vignette: >
-  %\VignetteIndexEntry{02. Test chapter}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
+# Test chapter
 
 ```{r, echo=FALSE, results="asis"}
 library(rebook)
@@ -36,7 +23,7 @@ Similarly, chunk names starting with `unref-` are ignored.
 This is useful for read-only chunks that produce figures in the donor chapter (Figure \@ref(fig:unref-figure))
 but should not be reported by `extractCached()`.
 
-```{r unref-figure}
+```{r unref-figure, fig.cap="BLAH BLAH BLAH"}
 plot(1:10, 1:10, main="I am also hidden.")
 ```
 
