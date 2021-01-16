@@ -19,6 +19,12 @@ Testing, testing!
 
 More numbers:`r 2+3+4`.
 
+Unknown variables `r x` should not be evaluated.
+
+```{r}
+unknown_variable
+```
+
 # Finishing up {-}
 
 Nothing more to see here!
