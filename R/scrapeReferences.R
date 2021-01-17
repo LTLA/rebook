@@ -46,7 +46,7 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
         starts.inline <- startsWith(lines, "`r") 
         lines[starts.inline] <- sub("^`r [^`]+`", "PLACEHOLDER", lines[starts.inline])
         has.inline <- grepl("[^`]`r", lines)
-        lines[has.inline] <- sub("([^`])`r [^`]+`", "\\1PLACEHOLDER", lines[has.inline])
+        lines[has.inline] <- gsub("([^`])`r [^`]+`", "\\1PLACEHOLDER", lines[has.inline])
 
         # Preventing any actual evaluation of code.
         lines <- c("```{r}\nknitr::opts_chunk$set(eval=FALSE)\n```\n\n", lines)
@@ -61,8 +61,9 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
 
     target.dir <- file.path(workdir, basename(dir))
     old <- setwd(target.dir)
+    on.exit(setwd(old), add=TRUE, after=FALSE) # change directory before deletion.
+
     bookdown::render_book(input, output_dir="docs", quiet=TRUE)
-    on.exit(setwd(old), add=TRUE)
 
     ###################################################
     # Running through the HTMLs and scraping the linking information. 

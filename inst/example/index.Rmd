@@ -21,6 +21,8 @@ More numbers:`r 2+3+4`.
 
 Unknown variables `r x` should not be evaluated.
 
+Testing `r replacement` of multiple inline `r chunks` on a single line.
+
 ```{r}
 unknown_variable
 ```
