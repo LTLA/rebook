@@ -30,37 +30,47 @@
 #' @importFrom utils write.csv
 configureBook <- function(prefix=NULL, input="index.Rmd") {
     hostdir <- file.path('inst', 'book')
-    outdir <- file.path("inst", "rebook")
-    dir.create(outdir, showWarnings=FALSE)
+    configdir <- file.path("inst", "rebook")
+    dir.create(configdir, showWarnings=FALSE)
 
     # Filling up the configurations.
     df <- scrapeReferences(hostdir, input=input)
-    write.csv(file=file.path(outdir, "references.csv"), df, quote=FALSE, row.names=FALSE)
+    write.csv(file=file.path(configdir, "references.csv"), df, quote=FALSE, row.names=FALSE)
+
+    prefix.file <- file.path(configdir, "prefix.csv")
     if (!is.null(prefix)) {
-        write(file=file.path(outdir, "prefix.csv"), prefix)
+        write(file=prefix.file, prefix)
+    } else {
+        unlink(prefix.file)
     }
 
-    # Making a copy in the vignettes/ directory.
-    dir.create("vignettes", showWarnings=FALSE)
-    vigdir <- file.path("vignettes", "book")
-    if (file.exists(vigdir)) {
-        unlink(vigdir, force=TRUE, recursive=TRUE)
-    }
-    file.copy(hostdir, "vignettes", recursive=TRUE)
+    dir.create("vignettes")
 
-    # Spawning a Makefile. Note the TEMPORARY stuff is just a hack for now,
-    # until Bioconductor pulls from inst/docs.
-    write("all: compiled
+    # Spawning a Makefile in the vignettes directory. We need to figure
+    # out the output_dir but I can't be bothered to require yaml, so 
+    # we'll just do is the old-fashioned way.
+    outdir <- "_book"
+    all.lines <- readLines(file.path(hostdir, "_bookdown.yml"))
+    outdir.line <- grepl("^output_dir:", all.lines)
+    if (any(outdir.line)) {
+        outdir <- sub("^output_dir: +", "", all.lines[outdir.line][1])
+        outdir <- sub(" +$", "", outdir)
+    }
+
+    write(sprintf("all: compiled
 
 compiled: 
+	rm -rf book/ && cp -r ../inst/book book
 	cd book && \"${R_HOME}/bin/R\" -e \"bookdown::render_book('index.Rmd')\"
-	mv book/docs TEMPORARY
-	rm -rf book/ && mkdir book/ && mv TEMPORARY book/docs
-	mkdir -p ../inst && cp -r book/docs ../inst/", 
+	mv book/%s inst/doc
+	rm -rf book/", outdir),
         file="vignettes/Makefile")
 
     # Spawning a stub that just redirects to the deployed book.
-    write('---
+    # This requires us to figure out the name of our current package.     
+    pkg.name <- read.dcf("DESCRIPTION")[,"Package"]
+
+    write(paste0('---
 vignette: >
   %\\VignetteIndexEntry{Link to book}
   %\\VignetteEngine{knitr::rmarkdown}
@@ -70,11 +80,12 @@ vignette: >
 ```{r, echo=FALSE}
 # Some compileable code, apparently needed for the engine
 # to recognize this as Rmarkdown.
-a <- 1 + 1
+link <- BiocStyle::Biocbook("', pkg.name, '", label="link")
+URL <- sub(".*\\\\((.+))", "\\\\1", link)
 ```
 
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="`r sprintf("0; URL=http://bioconductor.org/books/%s/OSCA/", BiocManager::version())`">
-<link rel="canonical" href="`r sprintf("http://bioconductor.org/books/%s/OSCA/", BiocManager::version())`">',
+<meta http-equiv="refresh" content="`r sprintf("0; URL=%s", URL)`">
+<link rel="canonical" href="`r URL`">'),
         file="vignettes/stub.Rmd")
 }
