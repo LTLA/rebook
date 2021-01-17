@@ -61,7 +61,7 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
 
     target.dir <- file.path(workdir, basename(dir))
     old <- setwd(target.dir)
-    bookdown::render_book(input, output_dir="docs")
+    bookdown::render_book(input, output_dir="docs", quiet=TRUE)
     on.exit(setwd(old), add=TRUE)
 
     ###################################################

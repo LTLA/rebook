@@ -26,7 +26,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd") {
     df <- scrapeReferences(file.path("inst", "book"), input=input)
     outdir <- file.path("inst", "rebook")
     dir.create(outdir, showWarnings=FALSE)
-    write.csv(file=file.path(outdir, "references.csv"), df, col.names=TRUE, quote=FALSE, row.names=FALSE)
+    write.csv(file=file.path(outdir, "references.csv"), df, quote=FALSE, row.names=FALSE)
     if (!is.null(prefix)) {
         write(file=file.path(outdir, "prefix.csv"), prefix)
     }
