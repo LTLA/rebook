@@ -53,7 +53,7 @@ link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
     if (is.null(type)) {
         if (grepl("fig:", id)) {
             type <- "Figure"
-        } else if (grep("\\.", text)) {
+        } else if (grepl("\\.", text)) {
             type <- "Section"
         } else {
             type <- "Chapter"

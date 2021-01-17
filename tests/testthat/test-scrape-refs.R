@@ -23,3 +23,22 @@ test_that("scrapeReferences works correctly", {
     ref <- read.table(text=expected, header=TRUE)
     expect_identical(df, ref)
 })
+
+test_that("link works correctly", {
+    df <- read.table(text=expected, header=TRUE)
+
+    out <- link("fig:test-plot", package="stuff", df=df)
+    expect_match(out, "[**stuff** Figure 3.1]", fixed=TRUE)
+
+    out <- link("fig:test-plot", package="stuff", df=df, prefix=NA)
+    expect_match(out, "[Figure 3.1]", fixed=TRUE)
+
+    out <- link("fig:test-plot", package="stuff", df=df, type=NA)
+    expect_match(out, "[3.1]", fixed=TRUE)
+
+    out <- link("test-chapter", package="stuff", df=df)
+    expect_match(out, "[**stuff** Chapter 1]", fixed=TRUE)
+
+    out <- link("deep-nested-sub", package="stuff", df=df)
+    expect_match(out, "[**stuff** Section 2.2.1.1]", fixed=TRUE)
+})
