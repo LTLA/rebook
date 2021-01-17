@@ -7,26 +7,32 @@
 configureBook(prefix = NULL, input = "index.Rmd")
 }
 \arguments{
-\item{prefix}{String containing the prefix to be used when \code{\link{link}}ing from other books.}
+\item{prefix}{Optional string containing the prefix to be used when \code{\link{link}}ing from other books.}
 
 \item{input}{See \code{\link{scrapeReferences}}.}
 }
 \value{
-\code{NULL}, invisibly.
-A \code{"references.csv"} file is created in the \code{inst/rebook} directory.
-If \code{prefix} is specified, a \code{"prefix.csv"} file is also created.
+A number of files are created in the package directory.
+\itemize{
+\item A \code{"references.csv"} file is created in the \code{inst/rebook} directory,
+containing the table of references from \code{\link{scrapeReferences}}.
+\item If \code{prefix} is specified, a \code{"prefix.csv"} file is also created in \code{inst/rebook}.
+This contains the preferred prefix of the book.
+\item If \code{skip=FALSE}, a Makefile is created in \code{vignettes/} that triggers book compilation.
+\item A stub vignette at \code{vignettes/stub.Rmd} is created that redirects to the deployed book location.
+}
 }
 \description{
-Helper function to run in the \code{configure} of Bioconductor books,
-to set up for \code{\link{link}}ing from other books.
+Helper function to run at the top-level directory of Bioconductor book packages,
+to prepare for book compilation and to set up install-time resources for \code{\link{link}}ing from other books.
 }
 \details{
-This assumes that the \pkg{bookdown}-formatted book is located at \code{inst/book}.
+This function assumes that the \pkg{bookdown}-formatted book is located at \code{inst/book}.
 }
 \seealso{
 \code{\link{scrapeReferences}}, which is called by this function to create the reference table.
 
-\code{\link{link}}, which is used by other books to link to the \code{configure}d book.
+\code{\link{link}}, which is used by other books to link to the configured book.
 }
 \author{
 Aaron Lun
