@@ -44,7 +44,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd") {
         unlink(prefix.file)
     }
 
-    dir.create("vignettes")
+    dir.create("vignettes", showWarnings=FALSE)
 
     # Spawning a Makefile in the vignettes directory. We need to figure
     # out the output_dir but I can't be bothered to require yaml, so 
@@ -55,6 +55,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd") {
     if (any(outdir.line)) {
         outdir <- sub("^output_dir: +", "", all.lines[outdir.line][1])
         outdir <- sub(" +$", "", outdir)
+        outdir <- gsub("\"", "", outdir)
     }
 
     write(sprintf("all: compiled
@@ -62,7 +63,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd") {
 compiled: 
 	rm -rf book/ && cp -r ../inst/book book
 	cd book && \"${R_HOME}/bin/R\" -e \"bookdown::render_book('index.Rmd')\"
-	mv book/%s inst/doc
+	mkdir ../inst/doc && mv book/%s ../inst/doc/book
 	rm -rf book/", outdir),
         file="vignettes/Makefile")
 
