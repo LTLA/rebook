@@ -4,10 +4,12 @@
 \alias{openingDetails}
 \title{Report opening details about the book}
 \usage{
-openingDetails(...)
+openingDetails(..., Copyright = NULL)
 }
 \arguments{
 \item{...}{Further named strings to be included in the opening details.}
+
+\item{Copyright}{String containing copyright information; defaults to \code{"Bioconductor, <current year>"}.}
 }
 \value{
 A string containing the formatted details for inclusion into a YAML header.

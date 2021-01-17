@@ -2,6 +2,7 @@
 #'
 #' Report opening details about the book, to be executed as an R expression in the \code{Date:} field.
 #' 
+#' @param Copyright String containing copyright information; defaults to \code{"Bioconductor, <current year>"}.
 #' @param ... Further named strings to be included in the opening details.
 #'
 #' @details
@@ -23,7 +24,7 @@
 #' cat(openingDetails(), '\n')
 #' setwd(wd)
 #' @export
-openingDetails <- function(...) {
+openingDetails <- function(..., Copyright=NULL) {
     # Hunt for a DESCRIPTION file!
     curpath <- getwd()
     while (curpath != (nextpath <- dirname(curpath))) {
@@ -40,20 +41,20 @@ openingDetails <- function(...) {
     info <- read.dcf(target)
     authors <- eval(parse(text=info[,"Authors@R"]))
 
+    # Defaulting the copyright to Bioconductor, current year.
+    if (is.null(Copyright)) {
+        Copyright <- paste("Bioconductor,", format(Sys.Date(), "%Y"))
+    }
+
     # Getting the license for the book.
     stash <- c(
-        `Authors`= paste(format(authors, include=c("given", "family", "role")), collapse=", "),
-
-        `Version` = unname(info[,"Version"]),
-
-        `Modified` = unname(info[,"Date"]),
-
-        `Compiled` = as.character(Sys.Date()),
-
-        `Environment` = paste0(R.version.string, ", Bioconductor ", BiocManager::version()),
-
-        `License` = unname(info[,"License"]),
-
+        Authors = paste(format(authors, include=c("given", "family", "role")), collapse=", "),
+        Version = unname(info[,"Version"]),
+        Modified = unname(info[,"Date"]),
+        Compiled = as.character(Sys.Date()),
+        Environment = paste0(R.version.string, ", Bioconductor ", BiocManager::version()),
+        License = unname(info[,"License"]),
+        Copyright = Copyright,
         ...
     )
 
