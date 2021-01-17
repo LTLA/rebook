@@ -38,6 +38,7 @@
 #'
 #' @export
 #' @importFrom BiocStyle Biocbook
+#' @importFrom utils read.csv
 link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
     if (is.null(df)) {
         df <- link.env$df.list[[package]]

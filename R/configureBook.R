@@ -18,7 +18,7 @@
 #' @seealso
 #' \code{\link{scrapeReferences}}, which is called by this function to create the reference table.
 #'
-#' \code{\link{link}}, which is used by other books to link to the \code{\link{configure}}d book.
+#' \code{\link{link}}, which is used by other books to link to the \code{configure}d book.
 #'
 #' @export
 #' @importFrom utils write.csv
@@ -28,6 +28,6 @@ configureBook <- function(prefix=NULL, input="index.Rmd") {
     dir.create(outdir, showWarnings=FALSE)
     write.csv(file=file.path(outdir, "references.csv"), df, col.names=TRUE, quote=FALSE, row.names=FALSE)
     if (!is.null(prefix)) {
-        write(file=file.path(outdir, "prefix.csv"), name)
+        write(file=file.path(outdir, "prefix.csv"), prefix)
     }
 }

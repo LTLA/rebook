@@ -26,7 +26,7 @@ This assumes that the \pkg{bookdown}-formatted book is located at \code{inst/boo
 \seealso{
 \code{\link{scrapeReferences}}, which is called by this function to create the reference table.
 
-\code{\link{link}}, which is used by other books to link to the \code{\link{configure}}d book.
+\code{\link{link}}, which is used by other books to link to the \code{configure}d book.
 }
 \author{
 Aaron Lun

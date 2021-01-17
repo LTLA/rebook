@@ -30,7 +30,7 @@
 #' @author Aaron Lun
 #' @export
 scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=TRUE) {
-    dir.create(workdir, showWarning=FALSE)
+    dir.create(workdir, showWarnings=FALSE)
     file.copy(dir, workdir, recursive=TRUE, overwrite=TRUE)
     if (clean) { on.exit(unlink(workdir, recursive=TRUE)) }
 
@@ -38,7 +38,7 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
     # Doing a dummy compilation to get the references.
     # This requires removal of lines that break with eval=FALSE.
 
-    all.files <- list.files(workdir, recursive=TRUE, full=TRUE, pattern=".Rmd$")
+    all.files <- list.files(workdir, recursive=TRUE, full.names=TRUE, pattern=".Rmd$")
     for (f in all.files) {
         lines <- readLines(f)
 
@@ -68,7 +68,7 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
     # Running through the HTMLs and scraping the linking information. 
     # This is rather fragile as it assumes a particular HTML structure.
 
-    all.compiled <- list.files("docs", pattern=".html$", full=TRUE)
+    all.compiled <- list.files("docs", pattern=".html$", full.names=TRUE)
     link.info <- list(data.frame(id=character(0), file=character(0), text=character(0)))
     counter <- 1L
 
