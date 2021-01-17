@@ -41,4 +41,18 @@ test_that("link works correctly", {
 
     out <- link("deep-nested-sub", package="stuff", df=df)
     expect_match(out, "[**stuff** Section 2.2.1.1]", fixed=TRUE)
+
+    out <- link("fig:test-plot", package="stuff", prefix="WHEE", df=df)
+    expect_match(out, "[WHEE Figure 3.1]", fixed=TRUE)
 })
+
+test_that("link globals work correctly", {
+    df <- read.table(text=expected, header=TRUE)
+    out <- link("fig:test-plot", package="stuff", df=df)
+    expect_identical(rebook:::link.env$prefix.list[["stuff"]], "**stuff**")
+
+    out <- link("fig:test-plot", package="BLAH", df=df)
+    expect_identical(rebook:::link.env$prefix.list[["stuff"]], "**stuff**")
+    expect_identical(rebook:::link.env$prefix.list[["BLAH"]], "**BLAH**")
+})
+

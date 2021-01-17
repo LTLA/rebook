@@ -40,8 +40,12 @@
 #' @importFrom BiocStyle Biocbook
 link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
     if (is.null(df)) {
-        path <- system.file("rebook", "references.csv", package=package, mustWork=TRUE)
-        df <- read.csv(path)
+        df <- link.env$df.list[[package]]
+        if (is.null(df)) {
+            path <- system.file("rebook", "references.csv", package=package, mustWork=TRUE)
+            df <- read.csv(path)
+            link.env$df.list[[package]] <- df
+        }
     }
 
     m <- match(id, df$id)
@@ -62,13 +66,20 @@ link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
 
     if (!is.null(type) && !is.na(type)) {
         if (is.null(prefix)) {
-            attempt <- system.file("rebook", "prefix.csv", package=package)
-            if (attempt=="") {
-                prefix <- paste0("**", package, "**")
-            } else {
-                prefix <- readLines(attempt)[1]
+            prefix <- link.env$prefix.list[[package]]
+
+            if (is.null(prefix)) {
+                # This is install-time information, so we can cache this safely.
+                attempt <- system.file("rebook", "prefix.csv", package=package)
+                if (attempt=="") {
+                    prefix <- paste0("**", package, "**")
+                } else {
+                    prefix <- readLines(attempt)[1]
+                }
+                link.env$prefix.list[[package]] <- prefix
             }
         }
+
         if (!is.null(prefix) && !is.na(prefix)) {
             type <- paste(prefix, type)
         }
@@ -76,7 +87,9 @@ link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
         text <- paste(type, text)
     }
 
-    link <- Biocbook(paste0(package, "/", df$file[m], "#", id), label=text)
-
-    link
+    Biocbook(paste0(package, "/", df$file[m], "#", id), label=text)
 }
+
+link.env <- new.env()
+link.env$df.list <- list()
+link.env$prefix.list <- list()
