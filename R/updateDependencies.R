@@ -1,8 +1,9 @@
 #' Update the dependencies
 #'
-#' Update the book's \code{DESCRIPTION} file with the latest dependencies.
+#' Update the book package's DESCRIPTION file with the latest dependencies.
 #'
-#' @param dir String containing the path to the directory containing the book \code{DESCRIPTION} file.
+#' @param dir String containing the path to the directory containing the book.
+#' @param path String containing the path to the DESCRIPTION file.
 #' @param extra Character vector of extra packages to be added to imports,
 #' usually from packages that are in \code{Suggests} and thus not caught directly by \code{\link{scrapeDependencies}}.
 #' @param indent Integer scalar specifying the size of the indent to use when listing packages.
@@ -52,9 +53,8 @@
 #'
 #' @author Aaron Lun
 #' @export
-updateDependencies <- function(dir=".", extra=NULL, indent=4, field="Suggests", ...) {
+updateDependencies <- function(dir=".", path=file.path(dir, "DESCRIPTION"), extra=NULL, indent=4, field="Depends", ...) {
     scraped <- scrapeDependencies(dir, ...)
-    path <- file.path(dir, "DESCRIPTION")
 
     # Double read is deliberate to ensure that whitespace is preserved.
     collected <- read.dcf(path)

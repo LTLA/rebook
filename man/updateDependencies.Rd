@@ -6,14 +6,17 @@
 \usage{
 updateDependencies(
   dir = ".",
+  path = file.path(dir, "DESCRIPTION"),
   extra = NULL,
   indent = 4,
-  field = "Suggests",
+  field = "Depends",
   ...
 )
 }
 \arguments{
-\item{dir}{String containing the path to the directory containing the book \code{DESCRIPTION} file.}
+\item{dir}{String containing the path to the directory containing the book.}
+
+\item{path}{String containing the path to the DESCRIPTION file.}
 
 \item{extra}{Character vector of extra packages to be added to imports,
 usually from packages that are in \code{Suggests} and thus not caught directly by \code{\link{scrapeDependencies}}.}
@@ -30,7 +33,7 @@ The specified \code{field} in the \code{DESCRIPTION} file in \code{dir} is updat
 \code{NULL} is invisibly returned.
 }
 \description{
-Update the book's \code{DESCRIPTION} file with the latest dependencies.
+Update the book package's DESCRIPTION file with the latest dependencies.
 }
 \details{
 The book \code{DESCRIPTION} is useful for quick installation of all packages required across all chapters.

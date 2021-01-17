@@ -1,5 +1,5 @@
 # Testing scrapeDependencies.
-# library(testthat); library(rebook); source("test-scrape.R")
+# library(testthat); library(rebook); source("test-scrape-deps.R")
 
 testdir <- tempfile()
 dir.create(testdir)
@@ -45,9 +45,9 @@ Description: Like godzilla, but smaller.")
     
     updateDependencies(testdir)
     out <- read.dcf(file.path(testdir, "DESCRIPTION"))
-    suggests <- strsplit(out[,"Suggests"], ",\\s+")[[1]]
-    expect_true("O" %in% suggests)
-    expect_true("IJKLM" %in% suggests)
+    deps <- strsplit(out[,"Depends"], ",\\s+")[[1]]
+    expect_true("O" %in% deps)
+    expect_true("IJKLM" %in% deps)
 
     write(file=file.path(testdir, "DESCRIPTION"),
 "Package: son.of.godzilla
@@ -57,8 +57,8 @@ Suggests: nothing")
 
     updateDependencies(testdir)
     out <- read.dcf(file.path(testdir, "DESCRIPTION"))
-    suggests <- strsplit(out[,"Suggests"], ",\\s+")[[1]]
-    expect_true("O" %in% suggests)
-    expect_true("IJKLM" %in% suggests)
+    deps <- strsplit(out[,"Depends"], ",\\s+")[[1]]
+    expect_true("O" %in% deps)
+    expect_true("IJKLM" %in% deps)
 })
 
