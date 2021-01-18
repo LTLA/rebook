@@ -1,6 +1,6 @@
 #' Extract cached objects
 #' 
-#' Extract specific R objects from the knitr cache of a previously compiled Rmarkdown file (the \dQuote{donor})
+#' Extract specific R objects from the \pkg{knitr} cache of a previously compiled Rmarkdown file (the \dQuote{donor})
 #' so that it can be used in the compilation process of another Rmarkdown file (the \dQuote{acceptor}).
 #'
 #' @param path String containing the path to the donor Rmarkdown file.

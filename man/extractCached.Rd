@@ -21,7 +21,7 @@ A markdown chunk (wrapped in a collapsible element) is printed that contains all
 based on the code in the named chunks of the donor Rmarkdown file.
 }
 \description{
-Extract specific R objects from the knitr cache of a previously compiled Rmarkdown file (the \dQuote{donor})
+Extract specific R objects from the \pkg{knitr} cache of a previously compiled Rmarkdown file (the \dQuote{donor})
 so that it can be used in the compilation process of another Rmarkdown file (the \dQuote{acceptor}).
 }
 \details{

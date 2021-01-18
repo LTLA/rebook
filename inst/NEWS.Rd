@@ -20,6 +20,9 @@ Added \code{configureBook()} to configure a Bioconductor package as a book deplo
 
 \item 
 Added \code{link()} to rapidly link to references in a configured Bioconductor book package.
+
+\item 
+Added \code{extractFromPackage()} to extract objects from Rmarkdown files in installed packages.
 }}
 
 \section{Version 1.0.0}{\itemize{
