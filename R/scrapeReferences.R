@@ -43,9 +43,9 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
         lines <- readLines(f)
 
         # Removing all lines with inline references.
-        starts.inline <- startsWith(lines, "`r") 
+        starts.inline <- startsWith(lines, "`r ") 
         lines[starts.inline] <- sub("^`r [^`]+`", "PLACEHOLDER", lines[starts.inline])
-        has.inline <- grepl("[^`]`r", lines)
+        has.inline <- grepl("[^`]`r ", lines)
         lines[has.inline] <- gsub("([^`])`r [^`]+`", "\\1PLACEHOLDER", lines[has.inline])
 
         # Preventing any actual evaluation of code.
