@@ -47,6 +47,12 @@ extractFromPackage <- function(path, ..., package, envir = topenv(parent.frame()
         file.rename(file.path(pkg.dir, basename(inst.dir)), ver.dir)
     }
 
+    link.id <- rmd2id(file.path(ver.dir, path))
+    link.text <- link(link.id, package, error=FALSE)
+    if (is.null(link.text)) {
+        link.text <- NA
+    }
+
     force(envir)
-    extractCached(file.path(ver.dir, path), ..., envir=envir)
+    extractCached(file.path(ver.dir, path), ..., envir=envir, link.text=link.text)
 }

@@ -7,6 +7,10 @@
 #' @param chunk String containing the name of the requested chunk.
 #' @param objects Character vector containing variable names for one or more objects to be extracted.
 #' @param envir Environment where the loaded objects should be stored.
+#' Defaults to the environment in which this function is called.
+#' @param link.text String containing an Rmarkdown-formatted link to the donor file, to be inserted in the collapsible element's title.
+#' If \code{NULL}, we attempt to construct this automatically from \code{path} using \code{\link{rmd2id}}.
+#' If \code{NA}, no link text is inserted.
 #'
 #' @details
 #' Each R object is extracted in its state at the requested \code{chunk} and inserted into \code{envir}.
@@ -94,7 +98,7 @@
 #' 
 #' @export
 #' @importFrom knitr opts_knit
-extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
+extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), link.text=NULL) {
     prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
     cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
@@ -107,10 +111,15 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame())) {
     .load_objects(cache_path, chunks, objects=objects, envir=envir)
 
     # Trying to link to the original chapter, if we can.
-    attempt.id <- rmd2id(path)
     blurb <- "View set-up code"
-    if (!is.null(attempt.id)) {
-        blurb <- paste0(blurb, " (Chapter \\@ref(", attempt.id, "))")
+    if (is.null(link.text)) {
+        attempt.id <- rmd2id(path)
+        if (!is.null(attempt.id)) {
+            link.text <- paste0("Chapter \\@ref(", attempt.id, "))")
+        }
+    }
+    if (!is.null(link.text) && !is.na(link.text)) {
+        blurb <- paste0(blurb, " (", link.text, ")")
     }
 
     # Pretty-printing the chunks.

@@ -4,7 +4,13 @@
 \alias{extractCached}
 \title{Extract cached objects}
 \usage{
-extractCached(path, chunk, objects, envir = topenv(parent.frame()))
+extractCached(
+  path,
+  chunk,
+  objects,
+  envir = topenv(parent.frame()),
+  link.text = NULL
+)
 }
 \arguments{
 \item{path}{String containing the path to the donor Rmarkdown file.}
@@ -13,7 +19,12 @@ extractCached(path, chunk, objects, envir = topenv(parent.frame()))
 
 \item{objects}{Character vector containing variable names for one or more objects to be extracted.}
 
-\item{envir}{Environment where the loaded objects should be stored.}
+\item{envir}{Environment where the loaded objects should be stored.
+Defaults to the environment in which this function is called.}
+
+\item{link.text}{String containing an Rmarkdown-formatted link to the donor file, to be inserted in the collapsible element's title.
+If \code{NULL}, we attempt to construct this automatically from \code{path} using \code{\link{rmd2id}}.
+If \code{NA}, no link text is inserted.}
 }
 \value{
 Variables with names \code{objects} are created in \code{envir}.
