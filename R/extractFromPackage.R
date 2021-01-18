@@ -19,7 +19,8 @@
 #' In theory, doing so would avoid the need for a re-compilation but would also increase the disk usage of the donor package, so we favor the recompilation approach.
 #'
 #' The \code{work.dir} is usually set to a local directory to enable greater re-use of the cache across calls and R sessions.
-#' To avoid using stale objects, it will be flushed whenever there is a version bump to \code{package}.
+#' The contents are actually versioned according to the version of \code{package}; updates to \code{package} cause a creation of a new subdirectory in \code{work.dir}.
+#' We attempt to migrate caches wherever possible to avoid unnecessary recompilation.
 #'
 #' @return Depends on the arguments passed to \code{...}; see \code{\link{extractCached}}.
 #' 
@@ -37,14 +38,32 @@
 #' @importFrom utils packageVersion
 extractFromPackage <- function(path, ..., package, envir = topenv(parent.frame()), inst.dir="book", work.dir="_rebook_cache") {
     pkg.dir <- file.path(work.dir, package)
+    dir.create(pkg.dir, showWarnings=FALSE, recursive=TRUE)
     version <- as.character(packageVersion(package))
     ver.dir <- file.path(pkg.dir, version)
 
     if (!file.exists(ver.dir)) {
-        unlink(pkg.dir, recursive=TRUE)
-        dir.create(pkg.dir, recursive=TRUE)
         file.copy(system.file(inst.dir, package=package, mustWork=TRUE), pkg.dir, recursive=TRUE)
         file.rename(file.path(pkg.dir, basename(inst.dir)), ver.dir)
+
+        # Migrating caches from the last compiled version, for efficiency.
+        previous <- list.dirs(pkg.dir, recursive=FALSE, full.names=FALSE)
+        previous <- setdiff(previous, c(".", version))
+
+        if (length(previous) > 0L) {
+            to.clone <- previous[order(package_version(previous), decreasing=TRUE)[1]]
+            to.clone <- file.path(pkg.dir, to.clone)
+
+            all.files <- list.files(ver.dir, pattern="\\.Rmd$")
+            useful.files <- c(sub("\\.Rmd$", "_cache", all.files), sub("\\.Rmd$", "_files", all.files))
+
+            from <- file.path(to.clone, useful.files)
+            to <- file.path(ver.dir, useful.files)
+            keep <- file.exists(from) & !file.exists(to)
+
+            file.rename(from[keep], to[keep])
+            unlink(file.path(pkg.dir, previous), recursive=TRUE)
+        }
     }
 
     link.id <- rmd2id(file.path(ver.dir, path))
