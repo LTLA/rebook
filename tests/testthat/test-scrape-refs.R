@@ -44,6 +44,10 @@ test_that("link works correctly", {
 
     out <- link("fig:test-plot", package="stuff", prefix="WHEE", df=df)
     expect_match(out, "[WHEE Figure 3.1]", fixed=TRUE)
+
+    # Errors work out.
+    expect_error(link("fig:test-plot-0", package="stuff", prefix="WHEE", df=df), "not a recognized")
+    expect_null(link("fig:test-plot-0", package="stuff", prefix="WHEE", df=df, error=FALSE))
 })
 
 test_that("link globals work correctly", {

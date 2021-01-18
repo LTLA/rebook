@@ -13,12 +13,14 @@
 #' Only used if \code{type} is not \code{NA}. 
 #' @param df A data.frame containing all links for \code{package}.
 #' Only used for testing.
+#' @param error Logical scalar indicating whether an error should be raised if the link cannot be found.
 #' 
 #' @details
 #' We expect that the target book is set up as a Bioconductor package with a \code{configure} file that runs \code{\link{configureBook}}.
 #' This function will then retrieve install-time information from that package to create necessary hyperlinks to the Bioconductor-hosted book content.
 #'
 #' @return String containing a markdown-formatted link to the relevant part of the target book.
+#' If the link cannot be constructed and \code{error=FALSE}, a \code{NULL} is instead returned.
 #'
 #' @author Aaron Lun
 #' @examples
@@ -38,20 +40,18 @@
 #'
 #' @export
 #' @importFrom BiocStyle Biocbook
-#' @importFrom utils read.csv
-link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
+link <- function(id, package, type=NULL, prefix=NULL, df=NULL, error=TRUE) {
     if (is.null(df)) {
-        df <- link.env$df.list[[package]]
-        if (is.null(df)) {
-            path <- system.file("rebook", "references.csv", package=package, mustWork=TRUE)
-            df <- read.csv(path)
-            link.env$df.list[[package]] <- df
-        }
+        df <- .load_package_references(package, error=error)
     }
 
     m <- match(id, df$id)
     if (is.na(m)) {
-        stop("'", id, "' not a recognized reference for '", package, "'") 
+        if (error) {
+            stop("'", id, "' not a recognized reference for '", package, "'") 
+        } else {
+            return(NULL)
+        }
     }
 
     text <- df$text[m]
@@ -67,24 +67,11 @@ link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
 
     if (!is.null(type) && !is.na(type)) {
         if (is.null(prefix)) {
-            prefix <- link.env$prefix.list[[package]]
-
-            if (is.null(prefix)) {
-                # This is install-time information, so we can cache this safely.
-                attempt <- system.file("rebook", "prefix.csv", package=package)
-                if (attempt=="") {
-                    prefix <- paste0("**", package, "**")
-                } else {
-                    prefix <- readLines(attempt)[1]
-                }
-                link.env$prefix.list[[package]] <- prefix
-            }
+            prefix <- .load_package_prefix(package)
         }
-
         if (!is.null(prefix) && !is.na(prefix)) {
             type <- paste(prefix, type)
         }
-
         text <- paste(type, text)
     }
 
@@ -94,3 +81,33 @@ link <- function(id, package, type=NULL, prefix=NULL, df=NULL) {
 link.env <- new.env()
 link.env$df.list <- list()
 link.env$prefix.list <- list()
+
+#' @importFrom utils read.csv
+.load_package_references <- function(package, error) {
+    df <- link.env$df.list[[package]]
+    if (is.null(df)) {
+        path <- system.file("rebook", "references.csv", package=package, mustWork=error)
+        if (path!="") {
+            df <- read.csv(path)
+            link.env$df.list[[package]] <- df
+        }
+    }
+    df
+}
+
+.load_package_prefix <- function(package) {
+    prefix <- link.env$prefix.list[[package]]
+
+    if (is.null(prefix)) {
+        # This is install-time information, so we can cache this safely.
+        attempt <- system.file("rebook", "prefix.csv", package=package)
+        if (attempt=="") {
+            prefix <- paste0("**", package, "**")
+        } else {
+            prefix <- readLines(attempt)[1]
+        }
+        link.env$prefix.list[[package]] <- prefix
+    }
+
+    prefix
+}

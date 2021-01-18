@@ -4,7 +4,7 @@
 \alias{link}
 \title{Create a link to a different book}
 \usage{
-link(id, package, type = NULL, prefix = NULL, df = NULL)
+link(id, package, type = NULL, prefix = NULL, df = NULL, error = TRUE)
 }
 \arguments{
 \item{id}{String containing an identifier for a section or figure.}
@@ -22,9 +22,12 @@ Only used if \code{type} is not \code{NA}.}
 
 \item{df}{A data.frame containing all links for \code{package}.
 Only used for testing.}
+
+\item{error}{Logical scalar indicating whether an error should be raised if the link cannot be found.}
 }
 \value{
 String containing a markdown-formatted link to the relevant part of the target book.
+If the link cannot be constructed and \code{error=FALSE}, a \code{NULL} is instead returned.
 }
 \description{
 From another Rmarkdown file, create a link to a section or figure of a \pkg{rebook}-configured book.
