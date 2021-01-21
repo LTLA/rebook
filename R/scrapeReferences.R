@@ -79,14 +79,21 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
         # Pulling out all numbered sections.
         sec.divs <- XML::getNodeSet(out, "//div[matches(@class, 'section')]")
         for (i in seq_along(sec.divs)) {
-            if (grepl("unnumbered", XML::xmlGetAttr(sec.divs[[i]], name="class"))) {
+            cur.div <- sec.divs[[i]]
+            if (grepl("unnumbered", XML::xmlGetAttr(cur.div, name="class"))) {
                 next
             }
 
+            # Find the number based on the first header section number after it.
+            num.node <- XML::getNodeSet(cur.div, "(.//span[@class='header-section-number'])[1]")
+            sec.text <- XML::xmlValue(num.node)
+            matches <- regexpr("[0-9][0-9\\.]*$", sec.text) # stripping out non-numeric prefixes.
+            sec.num <- regmatches(sec.text, matches)
+
             link.info[[counter]] <- data.frame(
-                id=XML::xmlGetAttr(sec.divs[[i]], name="id"),
+                id=XML::xmlGetAttr(cur.div, name="id"),
                 file=basename(html),
-                text=XML::xmlGetAttr(sec.divs[[i]], name="number")
+                text=sec.num
             )
             counter <- counter + 1L
         }
