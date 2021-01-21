@@ -41,7 +41,8 @@ Note that we do not assume that the cache itself is present in the installation 
 In theory, doing so would avoid the need for a re-compilation but would also increase the disk usage of the donor package, so we favor the recompilation approach.
 
 The \code{work.dir} is usually set to a local directory to enable greater re-use of the cache across calls and R sessions.
-To avoid using stale objects, it will be flushed whenever there is a version bump to \code{package}.
+The contents are actually versioned according to the version of \code{package}; updates to \code{package} cause a creation of a new subdirectory in \code{work.dir}.
+We attempt to migrate caches wherever possible to avoid unnecessary recompilation.
 }
 \examples{
 tmp <- tempfile()
