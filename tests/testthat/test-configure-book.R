@@ -33,3 +33,22 @@ test_that("configureBook works correctly", {
 
     setwd(old)
 })
+
+test_that("configureBook adds the redirection if requested", {
+    dir <- tempfile() 
+    dir.create(dir)
+    old <- setwd(dir)
+
+    dir.create("inst")
+    file.copy(system.file("example", package="rebook"), "inst/", recursive=TRUE)
+    file.rename("inst/example", "inst/book")
+    write("Package: dummy", file="DESCRIPTION")
+
+    expect_error(configureBook(prefix="YAY", redirect='redirect.txt'), NA)
+
+    lines <- readLines("vignettes/Makefile")
+    expect_match(tail(lines, 1), "^\\t.*redirect.txt")
+    expect_match(lines[length(lines)-1], "^\\t[^\\s]") # no blank line!
+
+    setwd(old)
+})

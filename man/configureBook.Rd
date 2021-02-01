@@ -4,12 +4,14 @@
 \alias{configureBook}
 \title{Helper configuration function for books}
 \usage{
-configureBook(prefix = NULL, input = "index.Rmd")
+configureBook(prefix = NULL, input = "index.Rmd", redirect = NULL)
 }
 \arguments{
 \item{prefix}{Optional string containing the prefix to be used when \code{\link{link}}ing from other books.}
 
-\item{input}{See \code{\link{scrapeReferences}}.}
+\item{input}{Name of the index file for the book, see \code{\link{scrapeReferences}}.}
+
+\item{redirect}{Optional name of the file containing redirection information, to be passed to \code{\link{createRedirects}}.}
 }
 \value{
 A number of files are created in the package directory.
@@ -18,7 +20,8 @@ A number of files are created in the package directory.
 containing the table of references from \code{\link{scrapeReferences}}.
 \item If \code{prefix} is specified, a \code{"prefix.csv"} file is also created in \code{inst/rebook}.
 This contains the preferred prefix of the book.
-\item If \code{skip=FALSE}, a Makefile is created in \code{vignettes/} that triggers book compilation.
+\item A Makefile is created in \code{vignettes/} that triggers book compilation.
+This will also generate HTMLs for redirection via \code{\link{createRedirects}} if \code{redirect} is provided.
 \item A stub vignette at \code{vignettes/stub.Rmd} is created that redirects to the deployed book location.
 }
 }
@@ -27,7 +30,11 @@ Helper function to run at the top-level directory of Bioconductor book packages,
 to prepare for book compilation and to set up install-time resources for \code{\link{link}}ing from other books.
 }
 \details{
-This function assumes that the \pkg{bookdown}-formatted book is located at \code{inst/book}.
+This function assumes that the \pkg{bookdown}-formatted book is located at \code{inst/book} inside the package.
+\code{input} is interpreted relative to this location, e.g., if \code{input="index.Rmd"}, the file should be located at \code{inst/book/index.Rmd}.
+
+Similarly, \code{redirect} is provided, the file should already be present in \code{vignettes/}.
+For example, if \code{redirect="redirect.txt"}, the file should be located at \code{vignettes/redirect.txt}.
 }
 \seealso{
 \code{\link{scrapeReferences}}, which is called by this function to create the reference table.

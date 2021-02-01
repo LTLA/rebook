@@ -4,7 +4,8 @@
 #' to prepare for book compilation and to set up install-time resources for \code{\link{link}}ing from other books.
 #'
 #' @param prefix Optional string containing the prefix to be used when \code{\link{link}}ing from other books.
-#' @param input See \code{\link{scrapeReferences}}.
+#' @param input Name of the index file for the book, see \code{\link{scrapeReferences}}.
+#' @param redirect Optional name of the file containing redirection information, to be passed to \code{\link{createRedirects}}.
 #'
 #' @return A number of files are created in the package directory.
 #' \itemize{
@@ -12,12 +13,17 @@
 #' containing the table of references from \code{\link{scrapeReferences}}.
 #' \item If \code{prefix} is specified, a \code{"prefix.csv"} file is also created in \code{inst/rebook}.
 #' This contains the preferred prefix of the book.
-#' \item If \code{skip=FALSE}, a Makefile is created in \code{vignettes/} that triggers book compilation.
+#' \item A Makefile is created in \code{vignettes/} that triggers book compilation.
+#' This will also generate HTMLs for redirection via \code{\link{createRedirects}} if \code{redirect} is provided.
 #' \item A stub vignette at \code{vignettes/stub.Rmd} is created that redirects to the deployed book location.
 #' }
 #' 
 #' @details 
-#' This function assumes that the \pkg{bookdown}-formatted book is located at \code{inst/book}.
+#' This function assumes that the \pkg{bookdown}-formatted book is located at \code{inst/book} inside the package.
+#' \code{input} is interpreted relative to this location, e.g., if \code{input="index.Rmd"}, the file should be located at \code{inst/book/index.Rmd}.
+#'
+#' Similarly, \code{redirect} is provided, the file should already be present in \code{vignettes/}.
+#' For example, if \code{redirect="redirect.txt"}, the file should be located at \code{vignettes/redirect.txt}.
 #'
 #' @author Aaron Lun
 #' 
@@ -28,7 +34,7 @@
 #'
 #' @export
 #' @importFrom utils write.csv
-configureBook <- function(prefix=NULL, input="index.Rmd") {
+configureBook <- function(prefix=NULL, input="index.Rmd", redirect=NULL) {
     hostdir <- file.path('inst', 'book')
     configdir <- file.path("inst", "rebook")
     dir.create(configdir, showWarnings=FALSE)
@@ -58,6 +64,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd") {
         outdir <- gsub("\"", "", outdir)
     }
 
+    make.path <- "vignettes/Makefile"
     write(sprintf("all: compiled
 
 compiled: 
@@ -65,7 +72,11 @@ compiled:
 	cd book && \"${R_HOME}/bin/R\" -e \"bookdown::render_book('index.Rmd')\"
 	mkdir ../inst/doc && mv book/%s ../inst/doc/book
 	rm -rf book/", outdir),
-        file="vignettes/Makefile")
+        file=make.path)
+
+    if (!is.null(redirect)) {
+        write(file=make.path, sprintf("\t\"${R_HOME}/bin/R\" -e \"rebook::createRedirects(file='%s')\"", redirect), append=TRUE)
+    }
 
     # Spawning a stub that just redirects to the deployed book.
     # This requires us to figure out the name of our current package.     
