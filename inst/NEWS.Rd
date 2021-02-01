@@ -23,6 +23,9 @@ Added \code{link()} to rapidly link to references in a configured Bioconductor b
 
 \item 
 Added \code{extractFromPackage()} to extract objects from Rmarkdown files in installed packages.
+
+\item 
+Added \code{createRedirects()} to redirect from old, deprecated pages to their new locations.
 }}
 
 \section{Version 1.0.0}{\itemize{
