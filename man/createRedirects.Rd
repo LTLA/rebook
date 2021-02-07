@@ -8,7 +8,7 @@ createRedirects(
   name,
   pkg,
   page,
-  dir = "../inst/book/docs",
+  dir = "../inst/doc/book",
   file = NULL,
   check = FALSE,
   include.gif = TRUE

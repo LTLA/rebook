@@ -42,7 +42,7 @@
 #' @export
 #' @importFrom BiocStyle Biocbook
 #' @importFrom utils read.csv
-createRedirects <- function(name, pkg, page, dir="../inst/book/docs", file=NULL, check=FALSE, include.gif=TRUE) {
+createRedirects <- function(name, pkg, page, dir="../inst/doc/book", file=NULL, check=FALSE, include.gif=TRUE) {
     if (!is.null(file)) {
         contents <- read.csv(file, header=FALSE)
         name <- contents[,1]
