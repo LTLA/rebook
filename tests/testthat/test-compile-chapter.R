@@ -1,5 +1,5 @@
 # This tests the compilation machinery works as expected.
-# library(testthat); library(rebook); source("test-compile.R")
+# library(testthat); library(rebook); source("test-compile-chapter.R")
 
 example <- system.file("example", "test.Rmd", package="rebook")
 tmp <- tempfile()

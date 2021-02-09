@@ -1,51 +1,49 @@
 # This tests the behavior of extractFromPackage.
 # library(testthat); library(rebook); source("test-extract-package.R")
 
+example <- system.file("example", package="rebook")
+
 tmp <- tempfile()
-envir <- new.env()
-extractFromPackage("test.Rmd", chunk="ghidorah-1964", inst.dir="example",
-    envir=envir, objects="godzilla", package="rebook", work.dir=tmp)
+dir.create(tmp)
+file.copy(example, tmp, recursive=TRUE)
+src.dir <- file.path(tmp, "example")
+write(file=file.path(src.dir, "_bookdown.yml"),
+'book_filename: "Test book"
+pagetitle: "I am a test book!"
+delete_merged_file: true
+new_session: true
+language:
+ui:
+chapter_name: "Chapter "
+output_dir: "docs"
+rmd_files: ["test.Rmd"]')
 
-test_that("extractFromPackage works as expected", {
+test_that("extractCached works sensibly from an existing workspace", {
+    work.dir <- tempfile()
+    final.dir <- tempfile()
+
+    compileBook(src.dir, work.dir, final.dir, input="test.Rmd")
+    envir <- new.env()
+    extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", envir=envir)
     expect_identical(envir$godzilla, "GAO GAO")
+    expect_false(file.exists(file.path(work.dir, "test.html")))
 
-    cache.dir <- file.path(tmp, "rebook", as.character(packageVersion("rebook")))
-    expect_true(file.exists(cache.dir))
-    expect_true(file.exists(file.path(cache.dir, "test_cache")))
-
-    # Repeated extractions work.
-    extractFromPackage("test.Rmd", chunk="godzilla-2014", inst.dir="example",
-        envir=envir, objects="godzilla", package="rebook", work.dir=tmp)
-    expect_identical(envir$godzilla, "I'm back.")
+    unlink(file.path(work.dir, "test_cache"), recursive=TRUE)
+    envir <- new.env()
+    extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", envir=envir)
+    expect_identical(envir$godzilla, "GAO GAO")
+    expect_true(file.exists(file.path(work.dir, "test_cache")))
+    expect_true(file.exists(file.path(work.dir, "test-chapter.html"))) # triggers recompilation to build the cache.
 })
 
-test_that("extractions clear out previous entities", {
-    cache.dir <- file.path(tmp, "rebook", as.character(packageVersion("rebook")))
-    unlink(file.path(cache.dir, "test_cache"))
-    unlink(file.path(cache.dir, "test_files"))
-    unlink(file.path(cache.dir, "test.Rmd"))
+test_that("extractCached works sensibly in the absence of any workspace", {
+    work.dir <- tempfile()
+    final.dir <- tempfile()
 
-    old.dir <- file.path(tmp, "rebook", "0.0.1")
-    file.rename(cache.dir, old.dir)
-
-    extractFromPackage("test.Rmd", chunk="godzilla-2014", inst.dir="example",
-        envir=envir, objects="godzilla", package="rebook", work.dir=tmp)
-    expect_false(file.exists(old.dir))
-    expect_true(file.exists(file.path(cache.dir, "test.Rmd")))
-    expect_true(file.exists(file.path(cache.dir, "test_cache")))
-    expect_true(file.exists(file.path(cache.dir, "test_files")))
-
-    # Migrates the _cache and _file folders succesfully.
-    file.rename(cache.dir, old.dir)
-    write(file=file.path(old.dir, "test_cache", ".whee.txt"), "Aaron was here")
-    write(file=file.path(old.dir, "test_files", ".whee.txt"), "And also here")
-    write(file=file.path(old.dir, "test.Rmd"), "for giggles")
-
-    extractFromPackage("test.Rmd", chunk="godzilla-2014", inst.dir="example",
-        envir=envir, objects="godzilla", package="rebook", work.dir=tmp)
-    expect_false(file.exists(old.dir))
-
-    expect_identical(readLines(file.path(cache.dir, "test_cache", ".whee.txt")), "Aaron was here")
-    expect_identical(readLines(file.path(cache.dir, "test_files", ".whee.txt")), "And also here")
-    expect_true(any(grepl("godzilla", readLines(file.path(cache.dir, "test.Rmd"))))) # restores the reference content.
+    envir <- new.env()
+    extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example", envir=envir)
+    expect_identical(envir$godzilla, "GAO GAO")
+    expect_true(file.exists(file.path(work.dir, "test_cache")))
 })
+
+

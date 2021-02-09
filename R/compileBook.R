@@ -23,7 +23,12 @@
 compileBook <- function(src.dir, work.dir, final.dir, input="input.Rmd", ...) {
     .clean_dir_copy(src.dir, work.dir)
 
-    bookdown::render_book(file.path(work.dir, input.dir), ...)
+    RENDER <- function() {
+        old <- setwd(work.dir)
+        on.exit(setwd(old))
+        bookdown::render_book(input, ...)
+    }
+    RENDER()
 
     # Promoting caches to the main directory for easier access.
     book.dir <- file.path(work.dir, "_bookdown_files")
@@ -38,7 +43,7 @@ compileBook <- function(src.dir, work.dir, final.dir, input="input.Rmd", ...) {
 
 .clean_dir_copy <- function(from, to) {
     if (file.exists(to)) {
-        unlink(to)
+        unlink(to, recursive=TRUE)
     }
     target <- tempfile(tmpdir=dirname(to))
     dir.create(target, recursive=TRUE)
