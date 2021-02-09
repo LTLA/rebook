@@ -9,6 +9,10 @@
 #' The output path contains the version of the specified \code{package}.
 #' If \code{clear=TRUE}, any caches corresponding to older versions of the package are destroyed.
 #'
+#' If the environment variable \code{REBOOK_<PKG>_CACHE} is set for some package name \code{PKG} (uppercased with dots replaced by underscores),
+#' this is expected to contain the desired path and is returned directly. 
+#' This functionality should only be used by experienced developers.
+#'
 #' @return String containing the path to the cache directory for this book package.
 #'
 #' @author Aaron Lun
@@ -23,6 +27,12 @@
 #'
 #' @export
 getBookCache <- function(package, clear=TRUE) {
+    env.var <- paste0("REBOOK_", toupper(sub("\\.", "_", package)), "_CACHE")
+    target <- Sys.getenv(env.var, NA)
+    if (!is.na(target)) {
+        return(target)
+    }
+
     v <- packageVersion(package)
     # TODO: need some kind of BiocInstallUtils to manage caching and stuff. 
     pdir <- file.path(rappdirs::user_cache_dir("rebook", opinion=FALSE), package)

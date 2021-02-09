@@ -20,6 +20,10 @@ Get the path to the cache directory in which the book will be built.
 \details{
 The output path contains the version of the specified \code{package}.
 If \code{clear=TRUE}, any caches corresponding to older versions of the package are destroyed.
+
+If the environment variable \code{REBOOK_<PKG>_CACHE} is set for some package name \code{PKG} (uppercased with dots replaced by underscores),
+this is expected to contain the desired path and is returned directly. 
+This functionality should only be used by experienced developers.
 }
 \examples{
 getBookCache()
