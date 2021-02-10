@@ -2,28 +2,39 @@
 % Please edit documentation in R/compileBook.R
 \name{compileBook}
 \alias{compileBook}
+\alias{preCompileBook}
+\alias{postCompileBook}
 \title{Compile the book}
 \usage{
-compileBook(src.dir, work.dir, final.dir, input = "input.Rmd", ...)
+preCompileBook(src.dir, work.dir, desc = NULL)
+
+postCompileBook(work.dir, final.dir)
 }
 \arguments{
 \item{src.dir}{String containing the path to the book Rmarkdown sources.}
 
 \item{work.dir}{String containing the path to the workspace used to compile the book.}
 
+\item{desc}{String containing the path to a \code{DESCRIPTION} file to copy into \code{work.dir}.
+Typically used when the book is to inherit the \code{DESCRIPTION} of the enclosing package.}
+
 \item{final.dir}{String containing the path to the final location for the compiled book's HTMLs.}
-
-\item{input}{String containing the name of the file to pass to \code{\link[bookdown]{render_book}}.}
-
-\item{...}{Further arguments to pass to \code{\link[bookdown]{render_book}}.}
 }
 \value{
-\code{work} is populated with the book sources and intermediate content (e.g., caches).
-\code{final} is populated with the HTMLs.
-A \code{NULL} is invisibly returned.
+For \code{preCompileBook}, \code{work} is populated with the book sources and intermediate content (e.g., caches).
+
+For \code{postCompileBook}, \code{final} is populated with the HTMLs.
+
+In both cases, a \code{NULL} is invisibly returned.
 }
 \description{
-Compile a \pkg{bookdown} book in a separate workspace and copy the compiled book to a different location.
+Copy a \pkg{bookdown} book to a separate workspace prior to compilation,
+and then copy the compiled book to a final location.
+}
+\details{
+These two functions should bracket a \code{\link[bookdown]{render_book}} call.
+We do not make these into a single function as calling \code{render_book} inside another function inside a package does not interact properly with some imports.
+The offending example is that of \code{cbind}, which fails to be converted into an S4 generic (this would normally happen when \pkg{BiocGenerics} gets attached).
 }
 \seealso{
 \code{\link{configureBook}}, where this function is called in the Makefile.

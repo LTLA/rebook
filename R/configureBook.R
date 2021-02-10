@@ -54,10 +54,18 @@ configureBook <- function(prefix=NULL, input="index.Rmd", redirect=NULL) {
     pkg.name <- gsub("\\s", "", read.dcf("DESCRIPTION")[,"Package"])
 
     make.path <- "vignettes/Makefile"
+    cmds <- .makeCommandString(
+        src.dir=file.path('..', hostdir), 
+        work.expr=sprintf("rebook::getBookCache('%s')", pkg.name), 
+        final.dir='../inst/doc/book',
+        desc.expr="'../DESCRIPTION'",
+        input=input
+    )
+
     write(sprintf("all: compiled
 
 compiled: 
-	\"${R_HOME}/bin/R\" -e \"rebook::compileBook('%s', src=getBookCache('%s'), final='../inst/doc/book')\"", file.path("..", hostdir), pkg.name),
+	\"${R_HOME}/bin/R\" -e \"%s\"", paste(cmds, sep="; ")),
         file=make.path)
 
     if (!is.null(redirect)) {
@@ -86,4 +94,15 @@ URL <- sub(".*\\\\((.+))", "\\\\1", link)
 <meta http-equiv="refresh" content="`r sprintf("0; URL=%s", URL)`">
 <link rel="canonical" href="`r URL`">'),
         file="vignettes/stub.Rmd")
+}
+
+.makeCommandString <- function(src.dir, work.expr, final.dir, input='input.Rmd', desc.expr='NULL') {
+    c(
+        sprintf("work.dir <- %s", work.expr),
+        sprintf("rebook::preCompileBook('%s', work.dir=work.dir, desc=%s)", src.dir, desc.expr),
+        "old.dir <- setwd(work.dir)",
+        sprintf("bookdown::render_book('%s')", input),
+        "setwd(old.dir)",
+        sprintf("rebook::postCompileBook(work.dir=work.dir, final.dir='%s')", final.dir)
+    )
 }

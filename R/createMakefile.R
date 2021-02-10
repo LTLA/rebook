@@ -50,6 +50,7 @@
 #' @author Aaron Lun
 #' @export
 createMakefile <- function(dir=".", pattern="\\.Rmd$", ..., fname="Makefile") {
+    .Deprecated()
     g <- buildChapterGraph(dir, pattern=pattern, ...) 
     reports <- names(igraph::topo_sort(g))
 

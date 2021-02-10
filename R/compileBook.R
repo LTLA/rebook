@@ -1,17 +1,25 @@
 #' Compile the book
 #'
-#' Compile a \pkg{bookdown} book in a separate workspace and copy the compiled book to a different location.
+#' Copy a \pkg{bookdown} book to a separate workspace prior to compilation,
+#' and then copy the compiled book to a final location.
 #'
 #' @param src.dir String containing the path to the book Rmarkdown sources.
 #' @param work.dir String containing the path to the workspace used to compile the book.
 #' @param final.dir String containing the path to the final location for the compiled book's HTMLs.
-#' @param input String containing the name of the file to pass to \code{\link[bookdown]{render_book}}.
-#' @param ... Further arguments to pass to \code{\link[bookdown]{render_book}}.
+#' @param desc String containing the path to a \code{DESCRIPTION} file to copy into \code{work.dir}.
+#' Typically used when the book is to inherit the \code{DESCRIPTION} of the enclosing package.
 #'
 #' @return 
-#' \code{work} is populated with the book sources and intermediate content (e.g., caches).
-#' \code{final} is populated with the HTMLs.
-#' A \code{NULL} is invisibly returned.
+#' For \code{preCompileBook}, \code{work} is populated with the book sources and intermediate content (e.g., caches).
+#' 
+#' For \code{postCompileBook}, \code{final} is populated with the HTMLs.
+#'
+#' In both cases, a \code{NULL} is invisibly returned.
+#' 
+#' @details
+#' These two functions should bracket a \code{\link[bookdown]{render_book}} call.
+#' We do not make these into a single function as calling \code{render_book} inside another function inside a package does not interact properly with some imports.
+#' The offending example is that of \code{cbind}, which fails to be converted into an S4 generic (this would normally happen when \pkg{BiocGenerics} gets attached).
 #' 
 #' @author Aaron Lun
 #'
@@ -19,17 +27,22 @@
 #' \code{\link{configureBook}}, where this function is called in the Makefile.
 #' 
 #' \code{\link{getBookCache}}, typically used to generate a good choice for \code{work}.
+#' @name compileBook
+NULL
+
 #' @export
-compileBook <- function(src.dir, work.dir, final.dir, input="input.Rmd", ...) {
+#' @rdname compileBook
+preCompileBook <- function(src.dir, work.dir, desc=NULL) {
     .clean_dir_copy(src.dir, work.dir)
-
-    RENDER <- function() {
-        old <- setwd(work.dir)
-        on.exit(setwd(old))
-        bookdown::render_book(input, ...)
+    if (!is.null(desc)) {
+        file.copy(desc, work.dir)
     }
-    RENDER()
+    invisible(NULL)
+}
 
+#' @export
+#' @rdname compileBook
+postCompileBook <- function(work.dir, final.dir) {
     # Promoting caches to the main directory for easier access.
     book.dir <- file.path(work.dir, "_bookdown_files")
     for (x in list.files(book.dir)) {
@@ -39,6 +52,7 @@ compileBook <- function(src.dir, work.dir, final.dir, input="input.Rmd", ...) {
     outdir <- .find_output_directory(work.dir)
     compiled <- file.path(work.dir, outdir)
     .clean_dir_copy(compiled, final.dir)
+    invisible(NULL)
 }
 
 .clean_dir_copy <- function(from, to) {
