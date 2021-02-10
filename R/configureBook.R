@@ -65,7 +65,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd", redirect=NULL) {
     write(sprintf("all: compiled
 
 compiled: 
-	\"${R_HOME}/bin/R\" -e \"%s\"", paste(cmds, sep="; ")),
+	\"${R_HOME}/bin/R\" -e \"%s\"", paste(cmds, collapse="; ")),
         file=make.path)
 
     if (!is.null(redirect)) {
