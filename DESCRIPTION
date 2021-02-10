@@ -1,6 +1,6 @@
 Package: rebook
-Version: 1.1.9
-Date: 2021-02-07
+Version: 1.1.10
+Date: 2021-02-10
 Title: Re-using Content in Bioconductor Books
 Authors@R:
     person("Aaron", "Lun", email="infinite.monkeys.with.keyboards@gmail.com", role=c("aut", "cre", "cph"))
@@ -22,7 +22,9 @@ Suggests:
     igraph,
     XML,
     BiocManager,
-    RCurl
+    RCurl,
+    bookdown,
+    rappdirs
 License: GPL-3
 VignetteBuilder: knitr
 biocViews:
