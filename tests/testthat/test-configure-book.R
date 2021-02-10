@@ -14,7 +14,7 @@ test_that("configureBook works correctly", {
     expect_error(configureBook(prefix="YAY"), NA)
 
     lines <- readLines("vignettes/Makefile")
-    expect_true(any(grepl("docs", lines)))
+    expect_true(any(grepl("inst/doc/book", lines)))
 
     lines <- readLines("vignettes/stub.Rmd")
     expect_true(any(grepl("dummy", lines)))

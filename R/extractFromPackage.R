@@ -7,7 +7,7 @@
 #' @param ...,envir Further arguments to pass to \code{\link{extractCached}}.
 #' @param package String containing the name of the donor package.
 #' @param src.name String containing the name or relative path of the subdirectory in the donor package's installation directory that contains all the Rmarkdown files.
-#' @param work String containing the path to a subdirectory to hold the cache of the donor Rmarkdown file.
+#' @param work.dir String containing the path to a subdirectory to hold the cache of the donor Rmarkdown file.
 #'
 #' @details
 #' This function assumes that all potential donor Rmarkdown files for \code{package} are present in the directory \code{src.name}.

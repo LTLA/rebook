@@ -26,7 +26,7 @@ this is expected to contain the desired path and is returned directly.
 This functionality should only be used by experienced developers.
 }
 \examples{
-getBookCache()
+getBookCache('OSCA.workflows')
 
 }
 \seealso{

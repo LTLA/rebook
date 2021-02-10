@@ -23,7 +23,7 @@
 #' \code{\link{extractFromPackage}}, which populates the cache directory if this is not supplied. 
 #'
 #' @examples
-#' getBookCache()
+#' getBookCache('OSCA.workflows')
 #'
 #' @export
 getBookCache <- function(package, clear=TRUE) {

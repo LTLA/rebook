@@ -2,9 +2,9 @@
 #'
 #' Compile a \pkg{bookdown} book in a separate workspace and copy the compiled book to a different location.
 #'
-#' @param src String containing the path to the book Rmarkdown sources.
-#' @param work String containing the path to the workspace used to compile the book.
-#' @param final String containing the path to the final location for the compiled book's HTMLs.
+#' @param src.dir String containing the path to the book Rmarkdown sources.
+#' @param work.dir String containing the path to the workspace used to compile the book.
+#' @param final.dir String containing the path to the final location for the compiled book's HTMLs.
 #' @param input String containing the name of the file to pass to \code{\link[bookdown]{render_book}}.
 #' @param ... Further arguments to pass to \code{\link[bookdown]{render_book}}.
 #'

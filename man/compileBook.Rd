@@ -7,15 +7,15 @@
 compileBook(src.dir, work.dir, final.dir, input = "input.Rmd", ...)
 }
 \arguments{
+\item{src.dir}{String containing the path to the book Rmarkdown sources.}
+
+\item{work.dir}{String containing the path to the workspace used to compile the book.}
+
+\item{final.dir}{String containing the path to the final location for the compiled book's HTMLs.}
+
 \item{input}{String containing the name of the file to pass to \code{\link[bookdown]{render_book}}.}
 
 \item{...}{Further arguments to pass to \code{\link[bookdown]{render_book}}.}
-
-\item{src}{String containing the path to the book Rmarkdown sources.}
-
-\item{work}{String containing the path to the workspace used to compile the book.}
-
-\item{final}{String containing the path to the final location for the compiled book's HTMLs.}
 }
 \value{
 \code{work} is populated with the book sources and intermediate content (e.g., caches).

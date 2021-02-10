@@ -22,7 +22,7 @@ extractFromPackage(
 
 \item{src.name}{String containing the name or relative path of the subdirectory in the donor package's installation directory that contains all the Rmarkdown files.}
 
-\item{work}{String containing the path to a subdirectory to hold the cache of the donor Rmarkdown file.}
+\item{work.dir}{String containing the path to a subdirectory to hold the cache of the donor Rmarkdown file.}
 }
 \value{
 Depends on the arguments passed to \code{...}; see \code{\link{extractCached}}.

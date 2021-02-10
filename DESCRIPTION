@@ -22,7 +22,9 @@ Suggests:
     igraph,
     XML,
     BiocManager,
-    RCurl
+    RCurl,
+    bookdown,
+    rappdirs
 License: GPL-3
 VignetteBuilder: knitr
 biocViews:
