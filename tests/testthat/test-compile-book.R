@@ -1,5 +1,5 @@
 # This tests the book compilation process.
-# library(testthat); library(rebook); source("test-compile-book.R")
+# library(testthat); library(rebook); source("setup.R"); source("test-compile-book.R")
 
 example <- system.file("example", package="rebook")
 
