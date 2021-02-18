@@ -99,10 +99,10 @@ URL <- sub(".*\\\\((.+))", "\\\\1", link)
 .makeCommandString <- function(src.dir, work.expr, final.dir, input='input.Rmd', desc.expr='NULL') {
     c(
         sprintf("work.dir <- %s", work.expr),
-        sprintf("rebook::preCompileBook('%s', work.dir=work.dir, desc=%s)", src.dir, desc.expr),
+        sprintf("handle <- rebook::preCompileBook('%s', work.dir=work.dir, desc=%s)", src.dir, desc.expr),
         "old.dir <- setwd(work.dir)",
         sprintf("bookdown::render_book('%s')", input),
         "setwd(old.dir)",
-        sprintf("rebook::postCompileBook(work.dir=work.dir, final.dir='%s')", final.dir)
+        sprintf("rebook::postCompileBook(work.dir=work.dir, final.dir='%s', handle=handle)", final.dir)
     )
 }

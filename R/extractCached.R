@@ -33,6 +33,7 @@
 #'
 #' Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 #' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileChapter}}.
+#' A report-specific lock is applied during this process to avoid problems with concurrent compilation.
 #'
 #' @return Variables with names \code{objects} are created in \code{envir}.
 #' A markdown chunk (wrapped in a collapsible element) is printed that contains all commands needed to generate those objects, 
@@ -103,7 +104,13 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), li
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
     cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
 
-    if (!dir.exists(cache_path)) {
+    # Do NOT abbreviate the dir.exists() check into a common variable, we want
+    # to check it again because the cache directory may exist by the time the
+    # lock is acquired.
+    lck <- .lock_report(path, exclusive=!dir.exists(cache_path))
+    on.exit(.unlock_report(lck))
+
+    if (!dir.exists(cache_path)) { 
         compileChapter(path)
     }
 

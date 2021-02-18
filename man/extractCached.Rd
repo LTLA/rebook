@@ -56,6 +56,7 @@ this is useful for figure-generating chunks that need to be referenced inside th
 
 Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileChapter}}.
+A report-specific lock is applied during this process to avoid problems with concurrent compilation.
 }
 \examples{
 # Mocking up an Rmarkdown report.

@@ -8,7 +8,7 @@
 \usage{
 preCompileBook(src.dir, work.dir, desc = NULL)
 
-postCompileBook(work.dir, final.dir)
+postCompileBook(work.dir, final.dir, handle = NULL)
 }
 \arguments{
 \item{src.dir}{String containing the path to the book Rmarkdown sources.}
@@ -19,11 +19,15 @@ postCompileBook(work.dir, final.dir)
 Typically used when the book is to inherit the \code{DESCRIPTION} of the enclosing package.}
 
 \item{final.dir}{String containing the path to the final location for the compiled book's HTMLs.}
+
+\item{handle}{The lock handle returned by \code{preCompileBook}.}
 }
 \value{
 For \code{preCompileBook}, \code{work} is populated with the book sources and intermediate content (e.g., caches).
+A lock handle is returned.
 
 For \code{postCompileBook}, \code{final} is populated with the HTMLs.
+Cache directories are moved out of \code{_bookdown_files} into their original location.
 
 In both cases, a \code{NULL} is invisibly returned.
 }
@@ -35,6 +39,15 @@ and then copy the compiled book to a final location.
 These two functions should bracket a \code{\link[bookdown]{render_book}} call.
 We do not make these into a single function as calling \code{render_book} inside another function inside a package does not interact properly with some imports.
 The offending example is that of \code{cbind}, which fails to be converted into an S4 generic (this would normally happen when \pkg{BiocGenerics} gets attached).
+
+\code{preCompileBook} may take some time as it will compile all chapters via \code{\link{compileChapter}}.
+It does so by locking and unlocking each chapter as it is compiled, thus avoiding problems with concurrent attempts to compile the same chapter via \code{\link{extractFromPackage}}.
+(Concurrent compilation of different chapters is still supported and allows for parallel package builds.)
+The actual compilation of the book with \pkg{bookdown} will simply re-use these caches for efficiency.
+
+After compilation of the individual chapters, \code{preCompileBook} will lock the entire \code{work.dir}.
+This ensures that \pkg{bookdown}'s directory shuffling does not break concurrent processes using the \pkg{knitr} cache directories. 
+The lock can be released by passing the returned handle to \code{handle} in \code{postCompileBook}.
 }
 \seealso{
 \code{\link{configureBook}}, where this function is called in the Makefile.
