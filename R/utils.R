@@ -8,9 +8,9 @@
 
     to.use <- out$rmd_files
     if (is.null(to.use)) {
-        to.use <- list.files(pattern=".Rmd$", ignore.case=TRUE)
+        to.use <- list.files(dir, pattern=".Rmd$", ignore.case=TRUE)
         for (i in out$rmd_subdir) {
-            to.use <- c(to.use, file.path(i, list.files(out$rmd_subdir, pattern=".Rmd$", ignore.case=TRUE)))
+            to.use <- c(to.use, file.path(i, list.files(file.path(dir, i), pattern=".Rmd$", ignore.case=TRUE)))
         }
     }
 
