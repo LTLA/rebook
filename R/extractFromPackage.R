@@ -32,11 +32,10 @@
 #'
 #' @export
 #' @importFrom utils packageVersion
-#' @importFrom filelock unlock
 extractFromPackage <- function(rmd.name, ..., package, envir = topenv(parent.frame()), src.name="book", work.dir=getBookCache(package)) {
     # Respecting global locks on the directory.
     no.work.dir <- !file.exists(work.dir)
-    lck <- .lock_work_dir(work.dir, exclusive=no.work.dir)
+    lck <- .lock_dir(work.dir, exclusive=no.work.dir)
     on.exit(unlock(lck))
 
     if (no.work.dir) {

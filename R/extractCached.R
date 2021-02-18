@@ -99,7 +99,6 @@
 #' 
 #' @export
 #' @importFrom knitr opts_knit
-#' @importFrom filelock unlock
 extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), link.text=NULL) {
     prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
@@ -107,7 +106,7 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), li
 
     no.cache <- !dir.exists(cache_path)
     lck <- .lock_report(path, exclusive=no.cache)
-    on.exit(unlock(lck))
+    on.exit(.unlock_report(lck))
 
     if (no.cache) {
         compileChapter(path)
@@ -147,12 +146,6 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), li
     collapseEnd()
 
     invisible(NULL)
-}
-
-#' @importFrom filelock lock
-.lock_report <- function(path, ...) {
-    lck.path <- paste0(path, "-00LOCK") 
-    lock(lck.path, ...)
 }
 
 .extract_chunks <- function(fname, chunk) 

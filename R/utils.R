@@ -25,3 +25,27 @@
     }
     outdir
 }
+
+#' @importFrom filelock lock
+.lock_report <- function(path, ...) {
+    lck.path <- paste0(path, "-00LOCK")
+    lock(lck.path, ...)
+}
+
+#' @importFrom filelock unlock
+.unlock_report <- function(lck) {
+    unlock(lck)
+}
+
+#' @importFrom filelock lock
+.lock_dir <- function(dir, ...) {
+    # TODO: replace with dir.expiry::lockDirectory.
+    lck.path <- paste0(sub("/$", "", dir), "-00LOCK")
+    lock(lck.path, ...)
+}
+
+#' @importFrom filelock unlock
+.unlock_dir <- function(lck) {
+    # TODO: replace with dir.expiry::unlockDirectory.
+    unlock(lc)
+}
