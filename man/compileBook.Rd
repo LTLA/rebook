@@ -40,7 +40,7 @@ These two functions should bracket a \code{\link[bookdown]{render_book}} call.
 We do not make these into a single function as calling \code{render_book} inside another function inside a package does not interact properly with some imports.
 The offending example is that of \code{cbind}, which fails to be converted into an S4 generic (this would normally happen when \pkg{BiocGenerics} gets attached).
 
-\code{preCompileBook} may take some time as it will compile all chapters via \code{\link{compileChapters}}.
+\code{preCompileBook} may take some time as it will compile all chapters via \code{\link{compileChapter}}.
 It does so by locking and unlocking each chapter as it is compiled, thus avoiding problems with concurrent attempts to compile the same chapter via \code{\link{extractFromPackage}}.
 (Concurrent compilation of different chapters is still supported and allows for parallel package builds.)
 The actual compilation of the book with \pkg{bookdown} will simply re-use these caches for efficiency.
