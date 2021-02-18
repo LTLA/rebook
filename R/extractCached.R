@@ -33,6 +33,7 @@
 #'
 #' Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 #' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileChapter}}.
+#' A report-specific lock is applied during this process to avoid problems with concurrent compilation.
 #'
 #' @return Variables with names \code{objects} are created in \code{envir}.
 #' A markdown chunk (wrapped in a collapsible element) is printed that contains all commands needed to generate those objects, 
@@ -98,12 +99,17 @@
 #' 
 #' @export
 #' @importFrom knitr opts_knit
+#' @importFrom filelock unlock
 extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), link.text=NULL) {
     prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
     cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
 
-    if (!dir.exists(cache_path)) {
+    no.cache <- !dir.exists(cache_path)
+    lck <- .lock_report(path, exclusive=no.cache)
+    on.exit(unlock(lck))
+
+    if (no.cache) {
         compileChapter(path)
     }
 
@@ -141,6 +147,12 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), li
     collapseEnd()
 
     invisible(NULL)
+}
+
+#' @importFrom filelock lock
+.lock_report <- function(path, ...) {
+    lck.path <- paste0(path, "-00LOCK") 
+    lock(lck.path, ...)
 }
 
 .extract_chunks <- function(fname, chunk) 

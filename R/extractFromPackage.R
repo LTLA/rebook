@@ -11,15 +11,12 @@
 #'
 #' @details
 #' This function assumes that all potential donor Rmarkdown files for \code{package} are present in the directory \code{src.name}.
-#' It copies the contents of {src.name} into \code{work} and calls \code{\link{extractCached}} on the \code{rmd.name} inside.
+#' It copies the contents of {src.name} into \code{work.dir} and calls \code{\link{extractCached}} on the \code{rmd.name} inside.
 #' The desired objects are then extracted from the subsequent \pkg{knitr} cache.
 #' 
-#' We perform a copy to respect any uses of \code{extractCached} inside the donor reports themselves (e.g., to reference other reports in the same directory).
-#' Note that we do not assume that the cache itself is present in the installation directory.
-#' In theory, doing so would avoid the need for a re-compilation but would also increase the disk usage of the donor package, so we favor the recompilation approach.
-#'
-#' The \code{work} directory should be set to a persistent cache to enable greater re-use of the cache across calls and R sessions.
-#' Indeed, the default here is the same as that used by \code{\link{compileBook}}, so we can avoid recopmilation if the donor book has already been compiled via the latter function.
+#' The \code{work.dir} directory should be set to a persistent cache to enable greater re-use of the cache across calls and R sessions.
+#' Indeed, the default here is the same as that used by \code{\link{preCompileBook}}, so we can avoid recopmilation if the donor book has already been compiled via the latter function.
+#' This function will respect any global locks imposed by other functions in the process of performing the copy (or other rearrangements).
 #'
 #' @return Depends on the arguments passed to \code{...}; see \code{\link{extractCached}}.
 #' 
@@ -35,8 +32,14 @@
 #'
 #' @export
 #' @importFrom utils packageVersion
+#' @importFrom filelock unlock
 extractFromPackage <- function(rmd.name, ..., package, envir = topenv(parent.frame()), src.name="book", work.dir=getBookCache(package)) {
-    if (!file.exists(work.dir)) {
+    # Respecting global locks on the directory.
+    no.work.dir <- !file.exists(work.dir)
+    lck <- .lock_work_dir(work.dir, exclusive=no.work.dir)
+    on.exit(unlock(lck))
+
+    if (no.work.dir) {
         src <- system.file(src.name, package=package, mustWork=TRUE)
         .clean_dir_copy(src, work.dir)
     }

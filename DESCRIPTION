@@ -16,6 +16,8 @@ Imports:
     callr,
     rmarkdown,
     CodeDepends,
+    yaml,
+    filelock,
     BiocStyle
 Suggests:
     testthat,
