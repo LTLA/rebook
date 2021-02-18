@@ -39,6 +39,11 @@
 
 #' @importFrom filelock lock
 .lock_dir <- function(dir, ...) {
+    host <- dirname(dir)
+    if (!dir.exists(host)) {
+        dir.create(host, recursive=TRUE, showWarnings=FALSE)
+    }
+
     # TODO: replace with dir.expiry::lockDirectory.
     lck.path <- paste0(sub("/$", "", dir), "-00LOCK")
     lock(lck.path, ...)
