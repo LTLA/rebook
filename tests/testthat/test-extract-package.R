@@ -1,5 +1,5 @@
 # This tests the behavior of extractFromPackage.
-# library(testthat); library(rebook); source("test-extract-package.R")
+# library(testthat); library(rebook); source("setup.R"); source("test-extract-package.R")
 
 example <- system.file("example", package="rebook")
 
@@ -18,7 +18,7 @@ chapter_name: "Chapter "
 output_dir: "docs"
 rmd_files: ["test.Rmd"]')
 
-test_that("extractCached works sensibly from an existing workspace", {
+test_that("extractFromPackage works sensibly from an existing workspace", {
     work.dir <- tempfile()
     final.dir <- tempfile()
 
@@ -36,7 +36,7 @@ test_that("extractCached works sensibly from an existing workspace", {
     expect_true(file.exists(file.path(work.dir, "test-chapter.html"))) # triggers recompilation to build the cache.
 })
 
-test_that("extractCached works sensibly in the absence of any workspace", {
+test_that("extractFromPackage works sensibly in the absence of any workspace", {
     work.dir <- tempfile()
     final.dir <- tempfile()
 
@@ -46,4 +46,19 @@ test_that("extractCached works sensibly in the absence of any workspace", {
     expect_true(file.exists(file.path(work.dir, "test_cache")))
 })
 
+test_that("extractFromPackage is thread-safe", {
+    skip_on_os("windows")
 
+    work.dir <- tempfile()
+    final.dir <- tempfile()
+
+    library(BiocParallel)
+    out <- bplapply(1:2, function(i) {
+        env <- new.env()
+        capture.output(rebook::extractFromPackage("test.Rmd", chunk="godzilla-1954", work.dir=work.dir, package="rebook", src.name="example", object="godzilla", envir=env))
+        env$godzilla
+    }, BPPARAM=MulticoreParam(2))
+
+    expect_identical(out[[1]], "RAWR!")
+    expect_identical(out[[2]], "RAWR!")
+})

@@ -47,5 +47,5 @@
 #' @importFrom filelock unlock
 .unlock_dir <- function(lck) {
     # TODO: replace with dir.expiry::unlockDirectory.
-    unlock(lc)
+    unlock(lck)
 }

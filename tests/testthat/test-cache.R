@@ -2,8 +2,7 @@
 # library(testthat); library(rebook); source("test-cache.R")
 
 example <- system.file("example", "test.Rmd", package="rebook")
-tmp <- tempfile()
-tmprmd <- paste0(tmp, ".Rmd")
+tmprmd <- tempfile(fileext=".Rmd")
 file.copy(example, tmprmd)
 
 test_that("first attempt will compile the report", {
@@ -57,3 +56,19 @@ test_that("stuff is created in the global environment on request", {
     expect_identical(godzilla, "RAWR!")
 })
 
+test_that("cache extraction is thread-safe via locks", {
+    skip_on_os("windows")
+
+    tmprmd2 <- tempfile(fileext=".Rmd")
+    file.copy(example, tmprmd2)
+
+    library(BiocParallel)
+    out <- bplapply(1:2, function(i) {
+        env <- new.env()
+        capture.output(rebook::extractCached(tmprmd2, chunk="godzilla-1954", object="godzilla", envir=env))
+        env$godzilla
+    }, BPPARAM=MulticoreParam(2))
+
+    expect_identical(out[[1]], "RAWR!")
+    expect_identical(out[[2]], "RAWR!")
+})

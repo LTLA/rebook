@@ -104,11 +104,13 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), li
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
     cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
 
-    no.cache <- !dir.exists(cache_path)
-    lck <- .lock_report(path, exclusive=no.cache)
+    # Do NOT abbreviate the dir.exists() check into a common variable, we want
+    # to check it again because the cache directory may exist by the time the
+    # lock is acquired.
+    lck <- .lock_report(path, exclusive=!dir.exists(cache_path))
     on.exit(.unlock_report(lck))
 
-    if (no.cache) {
+    if (!dir.exists(cache_path)) { 
         compileChapter(path)
     }
 

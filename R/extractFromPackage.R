@@ -33,12 +33,14 @@
 #' @export
 #' @importFrom utils packageVersion
 extractFromPackage <- function(rmd.name, ..., package, envir = topenv(parent.frame()), src.name="book", work.dir=getBookCache(package)) {
-    # Respecting global locks on the directory.
-    no.work.dir <- !file.exists(work.dir)
-    lck <- .lock_dir(work.dir, exclusive=no.work.dir)
+    # Respecting global locks on the directory. Do NOT abbreviate the
+    # 'work.dir' existence check into a common variable, as we want to check it
+    # again when the lock is acquired, just in case the directory was created
+    # in the meantime.
+    lck <- .lock_dir(work.dir, exclusive=!file.exists(work.dir))
     on.exit(unlock(lck))
 
-    if (no.work.dir) {
+    if (!file.exists(work.dir)) {
         src <- system.file(src.name, package=package, mustWork=TRUE)
         .clean_dir_copy(src, work.dir)
     }
