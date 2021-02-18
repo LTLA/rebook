@@ -1,6 +1,5 @@
-#' @importFrom yaml read_yaml
 .parse_bookdown_yaml <- function(dir) {
-    read_yaml(file.path(dir, "_bookdown.yml"))
+    yaml::read_yaml(file.path(dir, "_bookdown.yml"))
 }
 
 .get_book_chapters <- function(dir) {

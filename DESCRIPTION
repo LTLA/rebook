@@ -16,7 +16,6 @@ Imports:
     callr,
     rmarkdown,
     CodeDepends,
-    yaml,
     filelock,
     BiocStyle
 Suggests:
@@ -26,7 +25,9 @@ Suggests:
     BiocManager,
     RCurl,
     bookdown,
-    rappdirs
+    rappdirs,
+    yaml,
+    BiocParallel
 License: GPL-3
 VignetteBuilder: knitr
 biocViews:
