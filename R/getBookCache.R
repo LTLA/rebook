@@ -40,7 +40,7 @@ getBookCache <- function(package, clear=TRUE) {
     # TODO: need some kind of BiocInstallUtils to manage caching and stuff. 
     pdir <- file.path(rappdirs::user_cache_dir("rebook", opinion=FALSE), package)
 
-    others <- setdiff(list.dirs(pdir, recursive=FALSE, full=FALSE), as.character(v))
+    others <- setdiff(list.dirs(pdir, recursive=FALSE, full.names=FALSE), as.character(v))
     if (length(others)) {
         unlink(file.path(pdir, others), recursive=TRUE)
     }
