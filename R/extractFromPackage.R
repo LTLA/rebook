@@ -32,7 +32,7 @@
 #'
 #' @export
 #' @importFrom utils packageVersion
-extractFromPackage <- function(rmd.name, ..., package, envir = topenv(parent.frame()), src.name="book", work.dir=getBookCache(package)) {
+extractFromPackage <- function(rmd.name, ..., package, envir = parent.frame(1), src.name="book", work.dir=getBookCache(package)) {
     # Respecting global locks on the directory. Do NOT abbreviate the
     # 'work.dir' existence check into a common variable, as we want to check it
     # again when the lock is acquired, just in case the directory was created

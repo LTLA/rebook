@@ -8,7 +8,7 @@ extractFromPackage(
   rmd.name,
   ...,
   package,
-  envir = topenv(parent.frame()),
+  envir = parent.frame(1),
   src.name = "book",
   work.dir = getBookCache(package)
 )

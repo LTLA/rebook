@@ -28,6 +28,12 @@ test_that("multiple objects can be retrieved", {
     expect_false(any(grepl("plot\\(", out)))
 })
 
+test_that("objects go into the right default environment", {
+    out <- capture.output(extractCached(tmprmd, chunk="ghidorah-1964", object=c("godzilla", "ghidorah")))
+    expect_identical(godzilla, "GAO GAO")
+    expect_identical(ghidorah, "pew pew")
+})
+
 test_that("later objects can be successfully retrieved", {
     env <- new.env()
     out <- capture.output(extractCached(tmprmd, chunk="godzilla-2014", object="godzilla", envir=env))
@@ -54,6 +60,12 @@ test_that("objects from earlier chunks can be successfully retrieved", {
 test_that("stuff is created in the global environment on request", {
     capture.output(extractCached(tmprmd, chunk="godzilla-1954", object=c("godzilla")))
     expect_identical(godzilla, "RAWR!")
+
+    FUN <- function() {
+        extractCached(tmprmd, chunk="godzilla-1954", object=c("godzilla"))
+        godzilla
+    }
+    expect_identical(godzilla, FUN())
 })
 
 test_that("cache extraction is thread-safe via locks", {

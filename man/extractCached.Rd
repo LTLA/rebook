@@ -4,13 +4,7 @@
 \alias{extractCached}
 \title{Extract cached objects}
 \usage{
-extractCached(
-  path,
-  chunk,
-  objects,
-  envir = topenv(parent.frame()),
-  link.text = NULL
-)
+extractCached(path, chunk, objects, envir = parent.frame(1), link.text = NULL)
 }
 \arguments{
 \item{path}{String containing the path to the donor Rmarkdown file.}

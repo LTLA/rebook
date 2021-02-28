@@ -99,7 +99,7 @@
 #' 
 #' @export
 #' @importFrom knitr opts_knit
-extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), link.text=NULL) {
+extractCached <- function(path, chunk, objects, envir=parent.frame(1), link.text=NULL) {
     prefix <- sub("\\.rmd$", "", path, ignore.case = TRUE)
     cache_path <- file.path(paste0(prefix, "_cache"), "html")
     cache_path <- paste0(cache_path, "/") # because Windows file.path() strips trailing /.
@@ -115,6 +115,7 @@ extractCached <- function(path, chunk, objects, envir=topenv(parent.frame()), li
     }
 
     chunks <- .extract_chunks(path, chunk)
+    force(envir)
     .load_objects(cache_path, chunks, objects=objects, envir=envir)
 
     # Trying to link to the original chapter, if we can.

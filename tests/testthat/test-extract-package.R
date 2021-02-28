@@ -38,20 +38,28 @@ test_that("extractFromPackage works sensibly from an existing workspace", {
 
 test_that("extractFromPackage works sensibly in the absence of any workspace", {
     work.dir <- tempfile()
-    final.dir <- tempfile()
-
     envir <- new.env()
     extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example", envir=envir)
     expect_identical(envir$godzilla, "GAO GAO")
     expect_true(file.exists(file.path(work.dir, "test_cache")))
 })
 
+test_that("extractFromPackage puts objects in the right default environment", {
+    work.dir <- tempfile()
+    extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example")
+    expect_identical(godzilla, "GAO GAO")
+
+    FUN <- function() {
+        extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example")
+        godzilla
+    }
+    expect_identical(FUN(), "GAO GAO")
+})
+
 test_that("extractFromPackage is thread-safe", {
     skip_on_os("windows")
 
     work.dir <- tempfile()
-    final.dir <- tempfile()
-
     library(BiocParallel)
     out <- bplapply(1:2, function(i) {
         env <- new.env()
