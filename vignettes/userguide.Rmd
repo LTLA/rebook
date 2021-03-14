@@ -1,11 +1,11 @@
 ---
-title: Reusing book contents
+title: Writing a book with reusable contents
 author:
 - name: Aaron Lun
   email: infinite.monkeys.with.keyboards@gmail.com
-date: "Revised: May 16, 2020"
+date: "Revised: March 13, 2021"
 output:
-  html_document
+  BiocStyle::html_document
 package: rebook 
 vignette: >
   %\VignetteIndexEntry{Reusing book content}
@@ -21,20 +21,34 @@ chapterPreamble()
 # Introduction
 
 This package implements utilities for an opinionated way of re-using content in `r CRANpkg("bookdown")` books.
-The general idea is that you have objects from a "donor" chapter that you want to re-use in another "acceptor" chapter,
-but you do not want to repeat the code from the former in the latter.
+The general idea is that you can take objects from a "donor" chapter and re-use them in another "acceptor" chapter, where the two chapters can be in different books altogether.
+We can also generate links between books hosted by Bioconductor, allowing us to compartmentalize content without sacrificing integration of book contents.
 Most of these ideas were developed in the process for the [Orchestrating single-cell analysis](https://osca.bioconductor.org) book,
 but are hopefully applicable to other projects.
 
-# Exploiting the cache
+# Creating a Bioconductor book
 
-The general idea here is that we compile potential donor chapters with `r CRANpkg("knitr")` caching turned on.
-This allows us to retrieve arbitrary objects from the cache in later code,
-thus avoiding the need to (i) re-type the code required to generate the object
-and (ii) repeat the possibly time-consuming compilation process.
+A Bioconductor book is implemented as an R package that contains `r CRANpkg("bookdown")` book in its `inst/book` directory.
+That is to say, `inst/book` contains at least `index.Rmd` and `_bookdown.yml` such that `bookdown::render_book("inst/book/index.Rmd")` will compile the book.
+We aim to support any `r CRANpkg("bookdown")`-compatible configuration within `inst/book`, 
+though the most well-tested configuration avoids using input Rmarkdown files from subdirectories and places the compilation output in a `docs/` subdirectory.
 
-To demonstrate, we will use an example donor chapter from this package.
-We copy it to a temporary location so as avoid modifying the contents of the installation directory.
+The `DESCRIPTION` file should contain, in its `Depends:`, all packages that are used within the book chapters.
+This is somewhat tedious to extract manually so we provide the `updateDependencies()` function to automate the process.
+We recommend setting up a CI/CD job (e.g., via GitHub Actions, see examples [here](https://github.com/OSCA-source/OSCA/blob/master/.github/workflows/rebuild.yaml)) to run this automatically.
+This allows users to install the book package and automatically install all of the required dependencies.
+
+The `vignettes/` directory should contain a Makefile that builds the book as part of the package build process.
+This Makefile is created by running the `configureBook()` function, amongst other things that we will discuss later.
+
+# Reusing objects between chapters
+
+Sometimes we generate objects in one "donor" chapter that we want to re-use in other "acceptor" chapters.
+To do so, we compile potential donor chapters with `r CRANpkg("knitr")` caching turned on and retrieve arbitrary objects from the cache in acceptor chapters.
+This avoids the need to (i) re-type the code required to generate the object and (ii) repeat the possibly time-consuming compilation process.
+
+To demonstrate, we will use an example donor chapter included inside the `r Biocpkg("rebook")` package itself.
+We copy the Rmarkdown file to a temporary location so as avoid modifying the contents of the installation directory.
 
 ```{r}
 example0 <- system.file("example", "test.Rmd", package="rebook")
@@ -42,9 +56,9 @@ example <- tempfile(fileext=".Rmd")
 file.copy(example0, example)
 ```
 
-To perform this retrieval inside some acceptor chapter (in this case, this vignette),
-we call the `extractCached()` function on the location of the donor chapter.
-This will search through the cache to identify the object and pull it out into the current R session.
+To perform this retrieval inside some acceptor chapter (in this case, this vignette), we call the `extractCached()` function.
+We supply the path to the donor chapter, the object we want to extract, and the name of the latest chunk in which that object might appear.
+The function will then search through the cache to identify the relevant version of the object and pull it out into the current R session.
 For example:
 
 ```{r, results="asis"}
@@ -54,6 +68,11 @@ extractCached(example, chunk="godzilla-1954", object="godzilla")
 ```{r}
 godzilla
 ```
+
+The code leading up to and including the named chunk is also included in a collapsible box,
+to unobtrusively provide users with the context in which the object was generated.
+Note that proper functioning of the collapsible box depends on `chapterPreamble()` having been called, see below for details.
+In a real book, a link is also created to the donor chapter in place of the `??` shown here. 
 
 Multiple objects can be retrieved in this manner:
 
@@ -68,7 +87,7 @@ ghidorah
 
 Searching is done by chunk so as to disambiguate between objects with the same name across multiple chunks.
 This includes objects that are repeatedly modified, allowing us to retrieve the object different states within the donor.
-For example, we can pull out the same named variable but with a different value:
+For example, we can pull out the same named variable but from a later chunk (and thus with a different value):
 
 ```{r, results="asis"}
 extractCached(example, chunk="godzilla-2014", object="godzilla")
@@ -90,25 +109,69 @@ godzilla
 mechagodzilla
 ```
 
-If the donor chapter has not yet been compiled,
-`extractCached()` will compile it to create the cache from which to extract content.
-This allows us to refer to donor chapters that follow the current acceptor chapter;
+If the donor chapter has not yet been compiled, `extractCached()` will automatically compile it to create the cache from which to extract content.
+This allows us to refer to donor chapters that _follow_ the current acceptor chapter;
 no extra time is used as the `r CRANpkg("bookdown")` compilation of the donor can simply use the newly cached content.
 
-Note that this system imposes some restrictions on the formatting of the code chunks in the donor report;
-see `?extractCached` for more details.
+Note that this system imposes some restrictions on the formatting of the code chunks in the donor report.
+This is mostly caused by the limitations of our custom Rmarkdown parser - see `?extractCached` for more details.
+
+# Linking across books
+
+When writing a large book, we experience a tension between modularization and interconnectivity.
+Ideally, we would break up a large book into multiple smaller components, reducing the fragility of the compilation process and simplifying development. 
+However, this would make it harder to create links between related parts of the book, given that `r CRANpkg("bookdown")`'s automatic link resolution is limited to references within the same book.
+Without links, we lose the synergistic benefits of making a book in the first place. 
+
+To get around this, `r Biocpkg("rebook")` provides the `link()` function to easily link to references in other Bioconductor books.
+If the destination book is installed as a package, we can simply use the following in inline code chunks:
+
+```{r}
+link("installation", "OSCA.intro")
+link("some-comments-on-experimental-design", "OSCA.intro")
+link("fig:sce-structure", "OSCA.intro")
+```
+
+This allows developers to create highly modular books while retaining the convenience of easily linking between books.
+Note that, if we `link()` to another book, we should include the relevant book package as a `Suggests:` for our book.
+
+Conversely, calling `configureBook()` will automatically ensure that our current book - once it builds on Bioconductor - can serve as a link destination for other books.
+This is done by running through all the book chapters, extracting the references and building an index for re-use in other packages.
+
+# Reusing content across books
+
+In much the same way that `extractCached()` works for sharing objects between chapters of the same book,
+`extractFromPackage()` enables use to share objects between chapters of different books.
+Namely:
+
+```{r, results="asis"}
+extractFromPackage("lun-416b.Rmd", chunk="clustering", 
+    objects='sce.416b', package="OSCA.workflows")
+```
+
+```{r}
+sce.416b
+```
+
+This is achieved by exploiting the cache that is created when the donor book undergoes `R CMD build`.
+However, if the donor has not yet been compiled, then `extractFromPackage()` will do so to make sure that the cache exists.
+This allows for efficient yet robust re-use of objects across multiple books, at least for donor chapters that meet certain requirements.
+
+If we use content from another book, we should include the donor package as a `Suggests:` for our book.
+(Sometimes they are placed as `Imports:` to encourage the build system to use the most efficient compilation order.)
+If we want our book to serve as a donor, we need to ensure that the book compilation generates the cache in an appropriate location - this is automatically handled by `configureBook()`'s Makefile.
 
 # Pretty printing 
 
 As one can see from the examples above,
 `extractCached()` will create a collapsible HTML element containing the code used to generate the requested object(s).
 This informs reader about the provenance of the object without overwhelming them.
-The collapsible element class is defined using code in `chapterPreamble()`,
-which should be called at the top of every chapter to set up the compilation environment.
 This is also used to achieve pretty `sessionInfo()` printing, as shown below.
-
-# Session info
 
 ```{r, results="asis"}
 prettySessionInfo()
 ```
+
+The collapsible element class is defined using code in `chapterPreamble()`,
+which should be called at the top of every chapter with the `results="asis"` chunk option to set up the compilation environment.
+We suggest calling `chapterPreamble()` _after_ the chapter title is defined with `# Chapter Title`, as `r CRANpkg("bookdown")` seems to strip out all preceding content.

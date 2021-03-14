@@ -27,7 +27,9 @@ Suggests:
     bookdown,
     rappdirs,
     yaml,
-    BiocParallel
+    BiocParallel,
+    OSCA.intro,
+    OSCA.workflows
 License: GPL-3
 VignetteBuilder: knitr
 biocViews:
