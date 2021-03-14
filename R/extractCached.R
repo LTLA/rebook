@@ -123,7 +123,7 @@ extractCached <- function(path, chunk, objects, envir=parent.frame(1), link.text
     if (is.null(link.text)) {
         attempt.id <- rmd2id(path)
         if (!is.null(attempt.id)) {
-            link.text <- paste0("Chapter \\@ref(", attempt.id, "))")
+            link.text <- paste0("Chapter \\@ref(", attempt.id, ")")
         }
     }
     if (!is.null(link.text) && !is.na(link.text)) {
