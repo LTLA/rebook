@@ -11,8 +11,8 @@
 #' \code{NULL} is invisibly returned.
 #'
 #' @details
-#' Compilation is performed in an isolated session using \code{\link{r}} from the \pkg{callr} package.
-#' This ensures that settings from one chapter do not affect the next chapter.
+#' Compilation is performed in a completely fresh R session,
+#' to ensure that objects, globals and loaded packages from one chapter do not affect the next chapter.
 #'
 #' If an error is encountered during compilation of any Rmarkdown file,
 #' the standard output of \code{\link{render}} leading up to the error is printed out before the function exists.
@@ -37,28 +37,19 @@
 #' file.exists(sub(".Rmd$", "_cache", tmp)) # output cache exists.
 #' exists("rodan") # FALSE
 #' @export
-#' @importFrom callr r
 #' @importFrom rmarkdown render
 #' @importFrom methods is
 compileChapter <- function(path, cache=TRUE) {
     logfile <- tempfile(fileext=".log")
     on.exit(unlink(logfile))
 
-    E <- try(
-        r(
-            function(input, cache) { 
-                knitr::opts_chunk$set(cache=cache)
-                rmarkdown::render(input) 
-            }, 
-            args = list(input=path, cache=cache), 
-            stdout=logfile, 
-            stderr=logfile, 
-            spinner=FALSE
-        ),
-        silent=TRUE
-    )
+    # There's something strange with callr's environment, as it keeps on giving me
+    # "long vectors not supported yet" errors with knitr caching when a plain R session is fine.
+    # So given that I don't need the return value, I'll just spin up a new session.
+    cmd <- sprintf("knitr::opts_chunk$set(cache=%s); rmarkdown::render(commandArgs(TRUE))", deparse(cache))
+    status <- system2(R.home("bin/R"), c("--no-save", "--slave", "-e", shQuote(cmd), "--args", shQuote(path)), stdout=logfile, stderr=logfile)
 
-    if (is(E, "try-error")) {
+    if (status!=0) {
         message(sprintf("# %s\n", readLines(logfile)))
         stop(sprintf("failed to compile '%s'", path))
     }
