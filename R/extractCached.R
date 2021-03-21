@@ -14,22 +14,21 @@
 #'
 #' @details
 #' Each R object is extracted in its state at the requested \code{chunk} and inserted into \code{envir}.
-#' Note that the object does not have to be generated or even referenced in \code{chunk},
-#' provided it was generated in a previous chunk.
+#' Note that the object does not have to be generated or even referenced in the requested \code{chunk},
+#' provided it was generated in a previous \emph{named} chunk.
 #'
-#' The parser in this function is rather limited,
-#' so the donor Rmarkdown file is subject to several constraints:
+#' The parser in this function is rather limited, so the donor Rmarkdown file is subject to several constraints:
 #' \itemize{
 #' \item All chunks involved in generating the requested objects (indirectly or otherwise) should be named.
 #' \item All named chunks should be executed; \code{eval=FALSE} is not respected.
 #' \item All relevant code occurs within triple backticks, i.e., any inline code should be read-only.
 #' }
 #' 
-#' Unnamed chunks are allowed but cannot be referenced and will not be shown in the output of this function.
-#' This should not be used for code that might affect variables in the named chunks,
-#' i.e., code in unnamed chunks should be \dQuote{read-only} with respect to variables in the named chunks.
+#' Unnamed chunks are allowed but cannot be referenced and will not be used for searching for objects.
 #' Chunks with names starting with \code{unref-} are considered to be the same as unnamed chunks and will be ignored;
 #' this is useful for figure-generating chunks that need to be referenced inside the donor report.
+#' In general, neither of these should be used for code that might affect variables in the named chunks,
+#' i.e., code in unnamed chunks should be \dQuote{read-only} with respect to variables in the named chunks.
 #'
 #' Obviously, this entire process assumes that donor report has already been compiled with \code{cache=TRUE}.
 #' If not, \code{extractCached} will compile it (and thus generate the cache) using \code{\link{compileChapter}}.

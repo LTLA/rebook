@@ -20,8 +20,8 @@ Compile a Rmarkdown file - typically a chapter of a book -
 so that \code{\link{extractCached}} calls work correctly in other chapters.
 }
 \details{
-Compilation is performed in a separate R session,
-to ensure that settings from one chapter do not affect the next chapter.
+Compilation is performed in a completely fresh R session,
+to ensure that objects, globals and loaded packages from one chapter do not affect the next chapter.
 
 If an error is encountered during compilation of any Rmarkdown file,
 the standard output of \code{\link{render}} leading up to the error is printed out before the function exists.
