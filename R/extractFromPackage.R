@@ -37,12 +37,12 @@
 #' @export
 #' @importFrom utils packageVersion
 #' @importFrom dir.expiry lockDirectory unlockDirectory touchDirectory
-extractFromPackage <- function(rmd.name, ..., package, envir = parent.frame(1), src.name="book", work.dir=getBookCache(package)) {
+extractFromPackage <- function(rmd.name, ..., package, envir = parent.frame(1), src.name="book", work.dir=bookCache(package)) {
     # Do NOT abbreviate the 'work.dir' existence check into a common variable,
     # as we want to check it again when the lock is acquired, just in case the
     # directory was created in the meantime.
     lck <- lockDirectory(work.dir, exclusive=!file.exists(work.dir))
-    on.exit(unlockDirectory(lck))
+    on.exit(unlockDirectory(lck, limit=bookCacheExpiry()))
 
     if (!file.exists(work.dir)) {
         src <- system.file(src.name, package=package, mustWork=TRUE)

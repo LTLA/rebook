@@ -38,7 +38,7 @@
 #' @seealso
 #' \code{\link{configureBook}}, where this function is called in the Makefile.
 #' 
-#' \code{\link{getBookCache}}, typically used to generate a good choice for \code{work}.
+#' \code{\link{bookCache}}, the default choice for \code{work.dir}.
 #' @name compileBook
 NULL
 
@@ -54,7 +54,7 @@ preCompileBook <- function(src.dir, work.dir, desc=NULL) {
 #' @importFrom dir.expiry lockDirectory unlockDirectory touchDirectory
 .copy_book_sources <- function(src.dir, work.dir, desc) {
     lck <- lockDirectory(work.dir)
-    on.exit(unlockDirectory(lck))
+    on.exit(unlockDirectory(lck, limit=bookCacheExpiry()))
 
     .clean_dir_copy(src.dir, work.dir)
     if (!is.null(desc)) {
@@ -69,7 +69,7 @@ preCompileBook <- function(src.dir, work.dir, desc=NULL) {
     # This can be shared as the directory exists and won't be deleted here.
     # We only need to apply exclusive locks on the individual chapters.
     lck <- lockDirectory(work.dir, exclusive=FALSE)
-    on.exit(unlockDirectory(lck))
+    on.exit(unlockDirectory(lck, clear=FALSE))
 
     # Compiling each report, locking and unlocking as we go.
     all.rmds <- .get_book_chapters(work.dir)
@@ -99,7 +99,7 @@ postCompileBook <- function(work.dir, final.dir, handle=NULL) {
     .clean_dir_copy(compiled, final.dir)
 
     if (!is.null(handle)) {
-        unlockDirectory(handle)
+        unlockDirectory(handle, clear=FALSE)
     }
 
     invisible(NULL)

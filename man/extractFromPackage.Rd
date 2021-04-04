@@ -10,7 +10,7 @@ extractFromPackage(
   package,
   envir = parent.frame(1),
   src.name = "book",
-  work.dir = getBookCache(package)
+  work.dir = bookCache(package)
 )
 }
 \arguments{

@@ -52,7 +52,7 @@ The lock can be released by passing the returned handle to \code{handle} in \cod
 \seealso{
 \code{\link{configureBook}}, where this function is called in the Makefile.
 
-\code{\link{getBookCache}}, typically used to generate a good choice for \code{work}.
+\code{\link{bookCache}}, the default choice for \code{work.dir}.
 }
 \author{
 Aaron Lun

@@ -56,7 +56,7 @@ configureBook <- function(prefix=NULL, input="index.Rmd", redirect=NULL) {
     make.path <- "vignettes/Makefile"
     cmds <- .makeCommandString(
         src.dir=file.path('..', hostdir), 
-        work.expr=sprintf("rebook::getBookCache('%s')", pkg.name), 
+        work.expr=sprintf("rebook::bookCache('%s')", pkg.name), 
         final.dir='../inst/doc/book',
         desc.expr="'../DESCRIPTION'",
         input=input
