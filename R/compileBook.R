@@ -53,8 +53,6 @@ preCompileBook <- function(src.dir, work.dir, desc=NULL) {
 
 #' @importFrom dir.expiry lockDirectory unlockDirectory touchDirectory
 .copy_book_sources <- function(src.dir, work.dir, desc) {
-    dir.create(dirname(work.dir), showWarnings=FALSE)
-
     lck <- lockDirectory(work.dir)
     on.exit(unlockDirectory(lck))
 

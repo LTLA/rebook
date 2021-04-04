@@ -38,8 +38,6 @@
 #' @importFrom utils packageVersion
 #' @importFrom dir.expiry lockDirectory unlockDirectory touchDirectory
 extractFromPackage <- function(rmd.name, ..., package, envir = parent.frame(1), src.name="book", work.dir=getBookCache(package)) {
-    dir.create(dirname(work.dir), showWarnings=FALSE)
-
     # Do NOT abbreviate the 'work.dir' existence check into a common variable,
     # as we want to check it again when the lock is acquired, just in case the
     # directory was created in the meantime.
