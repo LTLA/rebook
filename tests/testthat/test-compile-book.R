@@ -20,7 +20,7 @@ output_dir: "docs"
 rmd_files: ["test.Rmd"]')
 
 test_that("compileBook works as expected", {
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
     final.dir <- tempfile()
 
     compileBook(src.dir, work.dir, final.dir, input="test.Rmd")
@@ -32,7 +32,7 @@ test_that("compileBook works as expected", {
 test_that("book compilation is thread-safe against concurrent extractFromPackage", {
     skip_on_os("windows")
 
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
     final.dir <- tempfile()
 
     library(BiocParallel)
@@ -63,7 +63,7 @@ language:
     chapter_name: "Chapter "
 rmd_files: ["test.Rmd"]')
 
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
     final.dir <- tempfile()
 
     compileBook(src.dir, work.dir, final.dir, input="test.Rmd")

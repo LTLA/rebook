@@ -13,7 +13,7 @@ postCompileBook(work.dir, final.dir, handle = NULL)
 \arguments{
 \item{src.dir}{String containing the path to the book Rmarkdown sources.}
 
-\item{work.dir}{String containing the path to the workspace used to compile the book.}
+\item{work.dir}{String containing the path to the versioned cache directory used to compile the book, see the \pkg{dir.expiry} package for details.}
 
 \item{desc}{String containing the path to a \code{DESCRIPTION} file to copy into \code{work.dir}.
 Typically used when the book is to inherit the \code{DESCRIPTION} of the enclosing package.}

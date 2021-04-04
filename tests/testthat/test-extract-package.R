@@ -19,7 +19,7 @@ output_dir: "docs"
 rmd_files: ["test.Rmd"]')
 
 test_that("extractFromPackage works sensibly from an existing workspace", {
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
     final.dir <- tempfile()
 
     compileBook(src.dir, work.dir, final.dir, input="test.Rmd")
@@ -37,7 +37,8 @@ test_that("extractFromPackage works sensibly from an existing workspace", {
 })
 
 test_that("extractFromPackage works sensibly in the absence of any workspace", {
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
+
     envir <- new.env()
     extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example", envir=envir)
     expect_identical(envir$godzilla, "GAO GAO")
@@ -45,21 +46,25 @@ test_that("extractFromPackage works sensibly in the absence of any workspace", {
 })
 
 test_that("extractFromPackage puts objects in the right default environment", {
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
+
     extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example")
     expect_identical(godzilla, "GAO GAO")
 
+    godzilla <- 5L
     FUN <- function() {
         extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="godzilla", src.name="example")
         godzilla
     }
     expect_identical(FUN(), "GAO GAO")
+    expect_identical(godzilla, 5L)
 })
 
 test_that("extractFromPackage is thread-safe", {
     skip_on_os("windows")
 
-    work.dir <- tempfile()
+    work.dir <- file.path(tempfile(), "1.0.0")
+
     library(BiocParallel)
     out <- bplapply(1:2, function(i) {
         env <- new.env()

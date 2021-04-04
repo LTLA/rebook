@@ -22,10 +22,11 @@ extractFromPackage(
 
 \item{src.name}{String containing the name or relative path of the subdirectory in the donor package's installation directory that contains all the Rmarkdown files.}
 
-\item{work.dir}{String containing the path to a subdirectory to hold the cache of the donor Rmarkdown file.}
+\item{work.dir}{String containing the path to a versioned cache directory to hold the contents of donor book, see the \pkg{dir.expiry} package for details.}
 }
 \value{
-Depends on the arguments passed to \code{...}; see \code{\link{extractCached}}.
+A \code{NULL} is invisibly returned.
+Objects are created in \code{envir} and a code chunk is printed; see \code{\link{extractCached}} for more details.
 }
 \description{
 Extract and compile Rmarkdown files from a \dQuote{donor} package's installation directory,
@@ -41,7 +42,10 @@ Indeed, the default here is the same as that used by \code{\link{preCompileBook}
 This function will respect any global locks imposed by other functions in the process of performing the copy (or other rearrangements).
 }
 \examples{
-tmp <- tempfile()
+# Only specifyin 'work.dir' here for demonstration purposes.
+# For actual use, just leave it as the default.
+tmp <- file.path(tempfile(), "1.0.0")
+
 extractFromPackage("test.Rmd", chunk="ghidorah-1964", src.name="example",
     objects="godzilla", package="rebook", work.dir=tmp)
 

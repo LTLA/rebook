@@ -4,7 +4,7 @@
 #' and then copy the compiled book to a final location.
 #'
 #' @param src.dir String containing the path to the book Rmarkdown sources.
-#' @param work.dir String containing the path to the workspace used to compile the book.
+#' @param work.dir String containing the path to the versioned cache directory used to compile the book, see the \pkg{dir.expiry} package for details.
 #' @param final.dir String containing the path to the final location for the compiled book's HTMLs.
 #' @param desc String containing the path to a \code{DESCRIPTION} file to copy into \code{work.dir}.
 #' Typically used when the book is to inherit the \code{DESCRIPTION} of the enclosing package.
@@ -44,27 +44,40 @@ NULL
 
 #' @export
 #' @rdname compileBook
+#' @importFrom dir.expiry lockDirectory
 preCompileBook <- function(src.dir, work.dir, desc=NULL) {
-    # Locking while we copy everything over.
-    lck <- .lock_dir(work.dir)
-    on.exit(.unlock_dir(lck))
+    .copy_book_sources(src.dir, work.dir, desc)
+    .precompile_book(work.dir)
+    lockDirectory(work.dir)
+}
+
+#' @importFrom dir.expiry lockDirectory unlockDirectory touchDirectory
+.copy_book_sources <- function(src.dir, work.dir, desc) {
+    dir.create(dirname(work.dir), showWarnings=FALSE)
+
+    lck <- lockDirectory(work.dir)
+    on.exit(unlockDirectory(lck))
 
     .clean_dir_copy(src.dir, work.dir)
     if (!is.null(desc)) {
         file.copy(desc, work.dir)
     }
 
-    # Release the lock now, as everything has been moved to the right place.
-    .unlock_dir(lck) 
+    touchDirectory(work.dir)
+}
+
+#' @importFrom dir.expiry lockDirectory unlockDirectory
+.precompile_book <- function(work.dir) {
+    # This can be shared as the directory exists and won't be deleted here.
+    # We only need to apply exclusive locks on the individual chapters.
+    lck <- lockDirectory(work.dir, exclusive=FALSE)
+    on.exit(unlockDirectory(lck))
 
     # Compiling each report, locking and unlocking as we go.
     all.rmds <- .get_book_chapters(work.dir)
     for (rmd in all.rmds) {
         .locked_compile_chapter(file.path(work.dir, rmd))
     }
-
-    # Returning another lock to protect the bookdown call.
-    .lock_dir(work.dir)
 }
 
 .locked_compile_chapter <- function(path) {
@@ -75,6 +88,7 @@ preCompileBook <- function(src.dir, work.dir, desc=NULL) {
 
 #' @export
 #' @rdname compileBook
+#' @importFrom dir.expiry unlockDirectory
 postCompileBook <- function(work.dir, final.dir, handle=NULL) {
     # Promoting caches to the main directory for easier access.
     book.dir <- file.path(work.dir, "_bookdown_files")
@@ -87,7 +101,7 @@ postCompileBook <- function(work.dir, final.dir, handle=NULL) {
     .clean_dir_copy(compiled, final.dir)
 
     if (!is.null(handle)) {
-        .unlock_dir(handle)
+        unlockDirectory(handle)
     }
 
     invisible(NULL)
