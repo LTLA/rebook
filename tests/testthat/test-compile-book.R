@@ -42,7 +42,7 @@ test_that("book compilation is thread-safe against concurrent extractFromPackage
             TRUE
         } else {
             env <- new.env()
-            extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", objects="ghidorah", envir=env)
+            extractFromPackage("test.Rmd", chunk="ghidorah-1964", work.dir=work.dir, package="rebook", src.name="example", objects="ghidorah", envir=env)
             env$ghidorah
         }
     }, BPPARAM=MulticoreParam(2))
