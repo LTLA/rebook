@@ -29,7 +29,6 @@
 #' bookCache('OSCA.workflows')
 #' bookCacheExpiry()
 #'
-#'
 #' @export
 bookCache <- function(package) {
     target <- Sys.getenv("REBOOK_CACHE", NA)
