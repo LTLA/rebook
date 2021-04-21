@@ -197,7 +197,7 @@ extractCached <- function(path, chunk, objects, envir=parent.frame(1), link.text
         present <- intersect(objects, lhs)
         for (p in present) {
             newglob <- new.env()
-            val <- load_cache(label=x, object=p, path=cache_path, dir=".")
+            val <- load_cache(label=x, object=p, path=cache_path, dir=".", envir=newglob)
             assign(p, envir=envir, value=val)
         }
 

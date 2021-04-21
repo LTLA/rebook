@@ -66,6 +66,11 @@ test_that("stuff is created in the global environment on request", {
         godzilla
     }
     expect_identical(godzilla, FUN())
+
+    # Global environment extractions aren't clobbered by knitr's tendency to overwrite the global environment.
+    extractCached(tmprmd, chunk="godzilla-2014", object=c("godzilla", "mechagodzilla"), env=.GlobalEnv)
+    expect_identical(.GlobalEnv$godzilla, "I'm back.")
+    expect_identical(.GlobalEnv$mechagodzilla, "beep beep")
 })
 
 test_that("cache extraction is thread-safe via locks", {
