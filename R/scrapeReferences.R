@@ -86,6 +86,10 @@ scrapeReferences <- function(dir, input="index.Rmd", workdir=tempfile(), clean=T
 
             # Find the number based on the first header section number after it.
             num.node <- XML::getNodeSet(cur.div, "(.//span[@class='header-section-number'])[1]")
+            if (length(num.node) != 1) {
+                next
+            }
+
             sec.text <- XML::xmlValue(num.node)
             matches <- regexpr("[0-9][0-9\\.]*$", sec.text) # stripping out non-numeric prefixes.
             sec.num <- regmatches(sec.text, matches)
