@@ -10,10 +10,7 @@ buildChapterGraph(dir, recursive = TRUE, pattern = "\\\\.Rmd$")
 \item{dir}{String containing the path to the directory containing Rmarkdown reports.
 This is searched recursively for all files ending in \code{".Rmd"}.}
 
-\item{recursive}{Further arguments to pass to \code{\link{list.files}} 
-when searching for Rmarkdown reports.}
-
-\item{pattern}{Further arguments to pass to \code{\link{list.files}} 
+\item{recursive, pattern}{Further arguments to pass to \code{\link{list.files}} 
 when searching for Rmarkdown reports.}
 }
 \value{
