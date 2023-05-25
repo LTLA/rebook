@@ -10,9 +10,6 @@ createMakefile(dir = ".", pattern = "\\\\.Rmd$", ..., fname = "Makefile")
 \item{dir}{String containing the path to the directory containing Rmarkdown reports.
 This is searched recursively for all files ending in \code{".Rmd"}.}
 
-\item{pattern}{Further arguments to pass to \code{\link{list.files}} 
-when searching for Rmarkdown reports.}
-
 \item{...}{Further arguments to pass to \code{\link{buildChapterGraph}}.}
 
 \item{fname}{String containing the name of the output Makefile.}
