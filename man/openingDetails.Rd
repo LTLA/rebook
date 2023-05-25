@@ -29,7 +29,7 @@ This assumes that authors are formatted as \code{Authors@R} and the \code{Licens
 }
 \examples{
 wd <- getwd()
-setwd(file.path(R.home(), 'library', 'rebook'))
+setwd(system.file(package="rebook"))
 cat(openingDetails(), '\n')
 setwd(wd)
 }

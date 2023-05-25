@@ -20,7 +20,7 @@
 #' @author Aaron Lun
 #' @examples
 #' wd <- getwd()
-#' setwd(file.path(R.home(), 'library', 'rebook'))
+#' setwd(system.file(package="rebook"))
 #' cat(openingDetails(), '\n')
 #' setwd(wd)
 #' @export
